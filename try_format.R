@@ -40,7 +40,7 @@ ictd_2_output <- function(ictd_prop, dataset.name)
 
 print(list.files())
 print(getwd())
-input_df <- readr::read_csv('input.csv')
+input_df <- readr::read_csv('input/input.csv')
 
 # Extract the names of each dataset
 dataset_name <- input_df$dataset.name
