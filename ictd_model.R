@@ -35,6 +35,128 @@ ictd_2_output <- function(ictd_prop, dataset.name)
   return(output_df)
 }
 
+multi_weight <- function(max_score)
+{
+  max_score_weight <- max_score
+  #B cell
+  max_score_weight[1] <- max_score_weight[1]*3
+  max_score_weight[2] <- max_score_weight[2]*2
+  max_score_weight[3] <- max_score_weight[3]*1.5
+  #Fibro
+  max_score_weight[5] <- max_score_weight[5]*3
+  max_score_weight[6] <- max_score_weight[6]*2
+  max_score_weight[7] <- max_score_weight[7]*1.5
+  #Endo
+  max_score_weight[9] <- max_score_weight[9]*3
+  max_score_weight[10]<- max_score_weight[10]*2
+  #Mono
+      #max_score_weight[12]<- max_score_weight[12]*3
+  #Neutro
+  
+  
+  return(max_score_weight) 
+}
+
+select_R4_8_cellmk <- function(tg_R1_lists)
+{
+  load('TCGA_IM_core_markers.RData')
+  #length(TCGA_core_list)
+  names(TCGA_core_list)
+  #length(TCGA_N_core_list)
+  names(TCGA_N_core_list)
+  print('Load TCGA marker done.')
+  #1. B cell
+  B_C_level_3 <- TCGA_core_list[[7]]
+  B_C_level_2 <- c(TCGA_core_list[[18]], TCGA_core_list[[21]])
+  B_N_level_1.5 <- TCGA_N_core_list[[14]]
+  B_all <- c(B_C_level_3,B_C_level_2,B_N_level_1.5)
+  #2. Fibroblast
+  Fibro_C_level_3 <- TCGA_core_list[[4]]
+  Fibro_C_level_2 <- c(TCGA_core_list[[9]],TCGA_core_list[[14]])
+  Fibro_N_level_1.5 <- TCGA_N_core_list[[11]]
+  Fibro_all <- c(Fibro_C_level_3,Fibro_C_level_2,Fibro_N_level_1.5)
+  #3. Endothelial
+  Endo_C_level_3 <- TCGA_core_list[[12]]
+  Endo_N_level_2 <- TCGA_N_core_list[[21]]
+  Endo_all <- c(Endo_C_level_3,Endo_N_level_2)
+  #4. Monocyte
+  Mono_C_level_3 <- TCGA_core_list[[5]]
+  #5. Neutrophils
+  Neutro_C_level_2 <- c(TCGA_core_list[[11]],TCGA_core_list[[13]],TCGA_core_list[[15]])
+  Neutro_N_level_2 <- TCGA_N_core_list[[20]]
+  #6.7.8 CD4T/CD8T/NK
+  CD4T_C_level_3 <- TCGA_core_list[[8]]
+  CD4T_N_level_2 <- TCGA_N_core_list[[3]]
+  T_C_level_3 <- TCGA_core_list[[19]]
+  T_N_level_3 <- TCGA_N_core_list[[19]]
+  NK_CD8T_N_level_3 <- TCGA_N_core_list[[28]]
+  
+  TCGA_genegroup <- list(B_C_level_3,B_C_level_2,B_N_level_1.5,B_all,Fibro_C_level_3,Fibro_C_level_2,Fibro_N_level_1.5,Fibro_all,
+                      Endo_C_level_3,Endo_N_level_2,Endo_all,Mono_C_level_3,Neutro_C_level_2,Neutro_N_level_2,
+                      CD4T_C_level_3,CD4T_N_level_2,T_C_level_3,T_N_level_3,NK_CD8T_N_level_3)
+  names(TCGA_genegroup) <- c("B_C_level_3","B_C_level_2","B_N_level_1.5","B_all","Fibro_C_level_3","Fibro_C_level_2","Fibro_N_level_1.5","Fibro_all",
+                             "Endo_C_level_3","Endo_N_level_2","Endo_all","Mono_C_level_3","Neutro_C_level_2","Neutro_N_level_2",
+                             "CD4T_C_level_3","CD4T_N_level_2","T_C_level_3","T_N_level_3","NK_CD8T_N_level_3")
+  
+  score_mat <- matrix(0, length(tg_R1_lists), 19)
+  colnames(score_mat) <- names(TCGA_genegroup)
+  rownames(score_mat) <- names(tg_R1_lists)
+  for(i in 1:length(tg_R1_lists)){
+    for(j in 1:length(TCGA_genegroup)){
+      score_mat[i,j] <- length(intersect(tg_R1_lists[[i]],TCGA_genegroup[[j]])) / length(TCGA_genegroup[[j]])
+    }
+  }
+  max_score <- matrix(apply(score_mat,2,max),1,ncol(score_mat))
+  colnames(max_score) <- colnames(score_mat)
+  #print(max_score)
+  max_score_weight <- multi_weight(max_score)
+  #print(max_score_weight)
+  #use score to identify row ID which represent the true marker
+  #1.B 
+  B_loca <- which.max(max_score_weight[1:3])
+  B_mk <- tg_R1_lists[[which(score_mat[,B_loca] == max_score[,B_loca])[1]]]
+  #assume pick the first element
+          # #----------how to pick if return two id?
+          # tg_R1_lists[[85]]
+          # [1] "CD79A" "MS4A1" "BANK1" "CD79B" "CD22"  "CD19"  "PAX5" 
+          # > tg_R1_lists[[97]]
+          # [1] "MS4A1"   "BANK1"   "CD79A"   "CD22"    "FAM129C" "FCRL1"   "FCRL5"  
+          # #----------
+  #2.Fibro
+  Fibro_loca <- 5-1 + which.max(max_score_weight[5:8])
+  Fibro_mk <- tg_R1_lists[[which(score_mat[,Fibro_loca] == max_score[,Fibro_loca])[1]]]
+  #assume pick the first element
+          # > tg_R1_lists[[13]]
+          # [1] "COL1A2" "COL1A1" "COL3A1" "LUM"    "THBS2"  "COL6A3" "MXRA8" 
+          # > tg_R1_lists[[51]]
+          # [1] "COL1A2" "COL1A1" "COL3A1" "PCOLCE" "THBS2"  "LUM"    "COL5A1"
+          # > tg_R1_lists[[84]]
+          # [1] "COL5A2" "COL1A2" "COL6A1" "COL6A3" "COL5A1" "ADAM12" "MMP2"  
+  #3. Endo
+  Endo_loca <- 9-1 + which.max(max_score_weight[9:11])
+  Endo_mk <- tg_R1_lists[[which(score_mat[,Endo_loca] == max_score[,Endo_loca])[1]]]
+  #4.Monocyte
+  Mono_mk <- tg_R1_lists[[which(score_mat[,12] == max_score[,12])[[1]]]]
+        # > tg_R1_lists[[19]]
+        # [1] "MS4A6A" "CD14"   "AIF1"   "C1QA"   "C1QB"   "MS4A4A" "CD163" 
+        # > tg_R1_lists[[68]]
+        # [1] "CD14"    "CD163"   "MS4A6A"  "CSF1R"   "MSR1"    "MS4A4A"  "SIGLEC1"
+  #5. Neutrophils
+  Neutro_loca <- 13-1 + which.max(max_score_weight[13:14])
+  Neutro_mk <- tg_R1_lists[[which(score_mat[,Neutro_loca] == max_score[,Neutro_loca])[[1]]]]
+  #6.7.8 T/NK
+  TNK_mk <- c()
+  for(k in 15:19){
+    mk_tmp <- tg_R1_lists[[which(score_mat[,k] == max_score[,k])[[1]]]]
+    TNK_mk <- c(TNK_mk, mk_tmp)
+  }
+   
+  eight_cell_mk <- list(B_mk,Fibro_mk,Endo_mk,Mono_mk,Neutro_mk,TNK_mk)
+  names(eight_cell_mk) <- c("B.cells","fibroblasts","endothelial.cells","monocytic.lineage","neutrophils","TNK")
+  
+  return(eight_cell_mk)
+}
+
 ICTD_round1 <- function(data_bulk)
 {
   data.matrix = data_bulk
@@ -67,10 +189,19 @@ ICTD_round1 <- function(data_bulk)
   print("R4 length :")
   print(length(tg_R1_lists))
   
+  eight_mk_list <- select_R4_8_cellmk(tg_R1_lists)    #length is 6 although contains 8 cell types
+  Prop <- Compute_Rbase_SVD(data.matrix, eight_mk_list[1:5])  #last element is mixture of TNK, use NMF
+  colnames(Prop) <- colnames(data.matrix)
+  dim(Prop)
+  
+  
+  
+  
+  
   
 }
 
-#-------------------------------
+#----------------------function part finish---------
 
 
 print("test ictd_round1!")
@@ -101,6 +232,7 @@ for(i in 1:length(expression_files))
   rownames(data_tmp) <- data_tmp[,1]
   data_tmp <- data_tmp[,-1]
   data_bulk <- data_tmp
+  data_bulk <- GSE72056_diri_example[[1]]
   ictd_result <- ICTD_round1(data_tmp)
   
   
