@@ -4,7 +4,7 @@ print("test docker with Hello word!")
 
 # Then, test the ICTD
 library('ICTD')
-#library('readr')
+library('readr')
 #data_bulk = GSE72056_diri_example[[1]]
 #print(data_bulk[1:5,1:6])
 # ictd_result <- ICTD(data_bulk)
@@ -48,7 +48,7 @@ print("what in the input folder:")
 print(list.files('input/'))
 input_df <- read.csv('input/input.csv')
 
-print('already read input file')
+print('read <input.csv> done!')
 
 # Extract the names of each dataset
 dataset_name <- as.character(input_df$dataset.name)
@@ -83,6 +83,7 @@ dir.create("output")
 # Write the result into output directory
 readr::write_csv(output_all_ds, "output/predictions.csv")
 
+print("files exist in the output folder:")
 print(list.files("output"))
 
 print("output file dim:")
