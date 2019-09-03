@@ -25,20 +25,55 @@ ictd_2_output <- function(ictd_prop, dataset.name)
   sample_col <- vv
   
   #3  
-  celltype_col <- rep(c('CD4.T.cell','CD8.T.cell','NK.cells','B.cells','monocytic.lineage','neutrophils','endothelial.cells','fibroblats'), ncol(ictd_prop))
+  celltype_col <- rep(c('CD4.T.cells','CD8.T.cells','NK.cells','B.cells','monocytic.lineage','neutrophils','endothelial.cells','fibroblasts'), ncol(ictd_prop))
   #4
-  prediction_col <- rep(c(0.1:0.8), ncol(ictd_prop))  
+  prediction_col <- rep(runif(8,min=0.01,max=0.8), ncol(ictd_prop))  
   
   #bind
   output_df <- data.frame(dataset.name=dataset.name,sample.id=sample_col,cell.type=celltype_col,prediction=prediction_col)
-
+  
   return(output_df)
+}
+
+ICTD_round1 <- function(data_bulk)
+{
+  data.matrix = data_bulk
+  if (length(colnames(data.matrix)) == 0) {
+    warning("input data do NOT have colnames")
+    colnames(data.matrix) <- paste("Setsample", 1:ncol(data.matrix),sep = "")
+  }
+  data.matrix <- rm_zero_row(data.matrix)
+  if (max(data.matrix) > 20) {
+    d.matrix <- log(data.matrix + 1)
+    d.matrix <- as.matrix(d.matrix)
+  }else{
+    d.matrix <- as.matrix(data.matrix)
+  }
+  data0 <- d.matrix
+  data2 <- data0
+  data21 <- data2[order(-apply(data2, 1, mean)), ]
+  data22 <- data21[unique(rownames(data21)), ]
+  data22_code <- data22[intersect(rownames(data22), TCGA_ensem_annotation[which(TCGA_ensem_annotation[,3] == "protein_coding" & TCGA_ensem_annotation[,4] != ""), 4]), ]
+  data23 <- data22[intersect(rownames(data22), TCGA_ensem_annotation[which(TCGA_ensem_annotation[,3] == "protein_coding" & TCGA_ensem_annotation[,4] != ""), 4]), ]
+  data23 <- normalize_data2(data23)
+  data_CORS_cancer <- data23
+  data_ccc <- data23
+  list_c1 <- MRHCA_IM_compute_MR(data_CORS_cancer = data_ccc, IM_id_list, immune_cell_uni_table = immune_cell_uni_table0_GS)
+  MR_IM_result_new_c <- MRHCA_IM_compute_full_pub_new(data_CORS_cancer = data_ccc, list_c = list_c1, IM_id_list, immune_cell_uni_table = immune_cell_uni_table0_GS)
+  tg_key = "nonono"
+  list_new_c2 <- Process_MR_IM_result_new(MR_IM_result_new_c, tg_key_c = tg_key, cell_type_enrich_cut = 0.4, cor_cut0 = 0.7, num_cut = 7, num_cut2 = 5, IM_id_list, immune_cell_uni_table = immune_cell_uni_table0_GS)
+  R1_filter_step1_results_new <- R1_list_filtering_step1_new(list_new_c2, data_CORS_cancer = data_ccc, max_cut = 7, cutn0 = 7, cut10 = 0.7, IM_id_list, immune_cell_uni_table = immune_cell_uni_table0_GS)
+  tg_R1_lists <- R1_filter_step1_results_new[[4]]
+  print("R4 length :")
+  print(length(tg_R1_lists))
+  
+  
 }
 
 #-------------------------------
 
 
-print("hello444")
+print("test ictd_round1!")
 
 
 print(list.files())
@@ -65,12 +100,13 @@ for(i in 1:length(expression_files))
   data_tmp <- read.csv(ff_tmp)
   rownames(data_tmp) <- data_tmp[,1]
   data_tmp <- data_tmp[,-1]
-  #ictd_result <- ICTD(data_tmp)
+  data_bulk <- data_tmp
+  ictd_result <- ICTD_round1(data_tmp)
+  
+  
+  # fake output!!!
   ictd_prop <- data_tmp[1:12,]
-  
-  
   dn_tmp <- unlist(strsplit(expression_files[i],split='.',fixed=T))[[1]]
-  
   output_tmp <- ictd_2_output(ictd_prop, dn_tmp)
   #combine prediction into big dataframe
   output_all_ds <- rbind(output_all_ds, output_tmp)
@@ -82,15 +118,12 @@ dir.create("output")
 
 # Write the result into output directory
 readr::write_csv(output_all_ds, "output/predictions.csv")
-
 print("files exist in the output folder:")
 print(list.files("output"))
-
 print("output file dim:")
 print(dim(output_all_ds))
 print("output :::")
 print(output_all_ds)
-
 
 
 
