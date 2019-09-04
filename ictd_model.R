@@ -194,6 +194,10 @@ ICTD_round1 <- function(data_bulk)
   colnames(Prop) <- colnames(data.matrix)
   dim(Prop)
   
+  #NMF 
+  #how to build matrix C?
+  #test and debug
+  
   
   
   
@@ -204,6 +208,9 @@ ICTD_round1 <- function(data_bulk)
 #----------------------function part finish---------
 
 
+
+
+#--------------pipeline-------------
 print("test ictd_round1!")
 
 
