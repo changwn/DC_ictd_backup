@@ -57,7 +57,22 @@ multi_weight <- function(max_score)
   return(max_score_weight) 
 }
 
-select_R4_8_cellmk <- function(tg_R1_lists)
+
+
+pick_good_basis <- function(data.matrix, tg_R1_lists, loca_in_R4_tmp)
+{
+  for(i in 1:length(loca_in_R4_tmp)){
+    
+    gn_tmp <- list()
+    gn_tmp[[1]] <- tg_R1_lists[[loca_in_R4_tmp[i]]]
+    names(gn_tmp) <- c("tmp_gene_list")
+    svd_row_basis <- Compute_Rbase_SVD(data.matrix, gn_tmp)
+    
+  }
+  
+}
+
+select_R4_8_cellmk <- function(data.matrix,tg_R1_lists)
 {
   load('TCGA_IM_core_markers.RData')
   #length(TCGA_core_list)
@@ -115,6 +130,11 @@ select_R4_8_cellmk <- function(tg_R1_lists)
   #1.B 
   B_loca <- which.max(max_score_weight[1:3])
   B_mk <- tg_R1_lists[[which(score_mat[,B_loca] == max_score[,B_loca])[1]]]
+  
+  loca_in_R4_tmp <- which(score_mat[,B_loca] == max_score[,B_loca])
+  B_mk <- pick_good_basis(data.matrix, tg_R1_lists, loca_in_R4_tmp)
+  
+  
   #assume pick the first element
           # #----------how to pick if return two id?
           # tg_R1_lists[[85]]
@@ -189,7 +209,7 @@ ICTD_round1 <- function(data_bulk)
   print("R4 length :")
   print(length(tg_R1_lists))
   
-  eight_mk_list <- select_R4_8_cellmk(tg_R1_lists)    #length is 6 although contains 8 cell types
+  eight_mk_list <- select_R4_8_cellmk(data.matrix,tg_R1_lists)    #length is 6 although contains 8 cell types
   Prop <- Compute_Rbase_SVD(data.matrix, eight_mk_list[1:5])  #last element is mixture of TNK, use NMF
   colnames(Prop) <- colnames(data.matrix)
   dim(Prop)
