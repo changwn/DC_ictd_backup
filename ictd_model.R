@@ -61,15 +61,22 @@ multi_weight <- function(max_score)
 
 pick_good_basis <- function(data.matrix, tg_R1_lists, loca_in_R4_tmp)
 {
+  max_cor_loca <- 1
+  max_cor_value <- 0
   for(i in 1:length(loca_in_R4_tmp)){
-    
     gn_tmp <- list()
     gn_tmp[[1]] <- tg_R1_lists[[loca_in_R4_tmp[i]]]
     names(gn_tmp) <- c("tmp_gene_list")
     svd_row_basis <- Compute_Rbase_SVD(data.matrix, gn_tmp)
-    
+    all_cor <- mean(cor(t(data.matrix[gn_tmp[[1]],]), t(svd_row_basis)))
+    if(all_cor > max_cor_value){
+      max_cor_value <- all_cor
+      max_cor_loca <- i
+    }
+    if(all_cor == max_cor_value){ print("two candidate list have same svd-cor score!") }
   }
   
+  return(loca_in_R4_tmp[max_cor_loca])
 }
 
 select_R4_8_cellmk <- function(data.matrix,tg_R1_lists)
