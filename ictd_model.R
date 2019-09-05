@@ -69,14 +69,16 @@ pick_good_basis <- function(data.matrix, tg_R1_lists, loca_in_R4_tmp)
     names(gn_tmp) <- c("tmp_gene_list")
     svd_row_basis <- Compute_Rbase_SVD(data.matrix, gn_tmp)
     all_cor <- mean(cor(t(data.matrix[gn_tmp[[1]],]), t(svd_row_basis)))
+    #print(paste('i=',i,' , average correlation = ',all_cor, sep = ""))
+    if(all_cor == max_cor_value){ print("two candidate list have same svd-cor score!") }
     if(all_cor > max_cor_value){
       max_cor_value <- all_cor
       max_cor_loca <- i
     }
-    if(all_cor == max_cor_value){ print("two candidate list have same svd-cor score!") }
+    
   }
   
-  return(loca_in_R4_tmp[max_cor_loca])
+  return(tg_R1_lists[[loca_in_R4_tmp[max_cor_loca]]])
 }
 
 select_R4_8_cellmk <- function(data.matrix,tg_R1_lists)
@@ -136,12 +138,9 @@ select_R4_8_cellmk <- function(data.matrix,tg_R1_lists)
   #use score to identify row ID which represent the true marker
   #1.B 
   B_loca <- which.max(max_score_weight[1:3])
-  B_mk <- tg_R1_lists[[which(score_mat[,B_loca] == max_score[,B_loca])[1]]]
-  
+  #B_mk <- tg_R1_lists[[which(score_mat[,B_loca] == max_score[,B_loca])[1]]]
   loca_in_R4_tmp <- which(score_mat[,B_loca] == max_score[,B_loca])
   B_mk <- pick_good_basis(data.matrix, tg_R1_lists, loca_in_R4_tmp)
-  
-  
   #assume pick the first element
           # #----------how to pick if return two id?
           # tg_R1_lists[[85]]
@@ -151,7 +150,9 @@ select_R4_8_cellmk <- function(data.matrix,tg_R1_lists)
           # #----------
   #2.Fibro
   Fibro_loca <- 5-1 + which.max(max_score_weight[5:8])
-  Fibro_mk <- tg_R1_lists[[which(score_mat[,Fibro_loca] == max_score[,Fibro_loca])[1]]]
+  loca_in_R4_tmp <- which(score_mat[,Fibro_loca] == max_score[,Fibro_loca])
+  #Fibro_mk <- tg_R1_lists[[which(score_mat[,Fibro_loca] == max_score[,Fibro_loca])[1]]]
+  Fibro_mk <- pick_good_basis(data.matrix, tg_R1_lists, loca_in_R4_tmp)
   #assume pick the first element
           # > tg_R1_lists[[13]]
           # [1] "COL1A2" "COL1A1" "COL3A1" "LUM"    "THBS2"  "COL6A3" "MXRA8" 
@@ -161,21 +162,29 @@ select_R4_8_cellmk <- function(data.matrix,tg_R1_lists)
           # [1] "COL5A2" "COL1A2" "COL6A1" "COL6A3" "COL5A1" "ADAM12" "MMP2"  
   #3. Endo
   Endo_loca <- 9-1 + which.max(max_score_weight[9:11])
-  Endo_mk <- tg_R1_lists[[which(score_mat[,Endo_loca] == max_score[,Endo_loca])[1]]]
+ #Endo_mk <- tg_R1_lists[[which(score_mat[,Endo_loca] == max_score[,Endo_loca])[1]]]
+  loca_in_R4_tmp <- which(score_mat[,Endo_loca] == max_score[,Endo_loca])
+  Endo_mk <- pick_good_basis(data.matrix, tg_R1_lists, loca_in_R4_tmp)
   #4.Monocyte
-  Mono_mk <- tg_R1_lists[[which(score_mat[,12] == max_score[,12])[[1]]]]
+  #Mono_mk <- tg_R1_lists[[which(score_mat[,12] == max_score[,12])[[1]]]]
+  loca_in_R4_tmp <- which(score_mat[,12] == max_score[,12])
+  Mono_mk <- pick_good_basis(data.matrix, tg_R1_lists, loca_in_R4_tmp)
         # > tg_R1_lists[[19]]
         # [1] "MS4A6A" "CD14"   "AIF1"   "C1QA"   "C1QB"   "MS4A4A" "CD163" 
         # > tg_R1_lists[[68]]
         # [1] "CD14"    "CD163"   "MS4A6A"  "CSF1R"   "MSR1"    "MS4A4A"  "SIGLEC1"
   #5. Neutrophils
   Neutro_loca <- 13-1 + which.max(max_score_weight[13:14])
-  Neutro_mk <- tg_R1_lists[[which(score_mat[,Neutro_loca] == max_score[,Neutro_loca])[[1]]]]
+  #Neutro_mk <- tg_R1_lists[[which(score_mat[,Neutro_loca] == max_score[,Neutro_loca])[[1]]]]
+  loca_in_R4_tmp <- which(score_mat[,Neutro_loca] == max_score[,Neutro_loca])
+  Neutro_mk <- pick_good_basis(data.matrix, tg_R1_lists, loca_in_R4_tmp)
   #6.7.8 T/NK
   TNK_mk <- c()
   for(k in 15:19){
-    mk_tmp <- tg_R1_lists[[which(score_mat[,k] == max_score[,k])[[1]]]]
-    TNK_mk <- c(TNK_mk, mk_tmp)
+    #mk_tmp <- tg_R1_lists[[which(score_mat[,k] == max_score[,k])[[1]]]]
+    #TNK_mk <- c(TNK_mk, mk_tmp)
+    loca_in_R4_tmp <- which(score_mat[,k] == max_score[,k])
+    TNK_mk <- c(TNK_mk,pick_good_basis(data.matrix, tg_R1_lists, loca_in_R4_tmp))
   }
    
   eight_cell_mk <- list(B_mk,Fibro_mk,Endo_mk,Mono_mk,Neutro_mk,TNK_mk)
@@ -221,7 +230,8 @@ ICTD_round1 <- function(data_bulk)
   colnames(Prop) <- colnames(data.matrix)
   dim(Prop)
   
-  #NMF 
+  #NMF  
+  #NMF test and debug
   #how to build matrix C?
   #test and debug
   
