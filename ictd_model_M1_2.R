@@ -370,6 +370,7 @@ R1_list_filtering_step1_new_BCV2 <- function (list_c2, data_CORS_cancer, max_cut
                                              ], maxrank0 = 20, msep_cut = 0.01) < 0.001)
     pp_all <- c(pp_all, pp)
   }
+  pp_all[which(is.na(pp_all))] <- 0
   pp_R1_marker_list_f1 <- clean_rank1_module_new(data_CORS_cancer, 
                                                  tg_marker_lists, pp_all, st0 = 6)
   pp_R1_marker_list_f1.5 <- cut_modules(pp_R1_marker_list_f1, 
@@ -426,6 +427,7 @@ R1_list_filtering_step1_new_BCV2 <- function (list_c2, data_CORS_cancer, max_cut
                                              ], maxrank0 = 20, msep_cut = 0.01) < 0.001)
     pp_all <- c(pp_all, pp)
   }
+  pp_all[which(is.na(pp_all))] <- 0
   pp_R1_marker_list_f3 <- clean_rank1_module(data_CORS_cancer, 
                                              R1_marker_list_f2.5, pp_all, st0 = 6)
   pp_R1_marker_list_f3.5 <- cut_modules(pp_R1_marker_list_f3, 
