@@ -225,6 +225,7 @@ select_R4_8_cellmk <- function(data.matrix,tg_R1_lists)
   eight_cell_mk <- list(B_mk,Fibro_mk,Endo_mk,Mono_mk,Neutro_mk,TNK_mk)
   names(eight_cell_mk) <- c("B.cells","fibroblasts","endothelial.cells","monocytic.lineage","neutrophils","TNK")
   
+  print("select_R4_8_cellmk DONE!!!")
   return(eight_cell_mk)
 }
 
@@ -271,6 +272,28 @@ EPIC_NKT48_mk <- function()
   return(TNK3_list)
 }
 
+extract_combine_list <- function(mylist)
+{
+  comb <- c()
+  for(i in 1:length(mylist))
+  {
+    comb <- c(comb, mylist[[i]])
+  }
+  
+  return(comb)
+}
+
+filt_tg_list_by_dataName <- function(two_list_combine,data.matrix)
+{
+  dt_gn_name <- rownames(data.matrix)
+  for(i in 1:length(two_list_combine))
+  {
+    two_list_combine[[i]] <- intersect(two_list_combine[[i]], dt_gn_name)
+  }
+  return(two_list_combine)
+  
+}
+
 ICTD_round1 <- function(data_bulk)
 {
   #1
@@ -281,7 +304,7 @@ ICTD_round1 <- function(data_bulk)
   # data_bulk <- data_t
   # #2
   # data_bulk <- GSE72056_diri_example[[1]]
-  
+  # 
   data.matrix = data_bulk
   if (length(colnames(data.matrix)) == 0) {
     warning("input data do NOT have colnames")
@@ -315,10 +338,13 @@ ICTD_round1 <- function(data_bulk)
   eight_mk_list <- select_R4_8_cellmk(data.matrix,tg_R1_lists)    #length is 6 although contains 8 cell types
   epic_mk <- EPIC_NKT48_mk()
   two_list_combine <- c(eight_mk_list[1:5], epic_mk)
-  Prop <- Compute_Rbase_SVD(data.matrix, two_list_combine)  #last element is mixture of TNK, use NMF
+  two_list_combine_new <- filt_tg_list_by_dataName(two_list_combine,data.matrix)
+  Prop <- Compute_Rbase_SVD(data.matrix, two_list_combine_new)  #last element is mixture of TNK, use NMF
+  print("SVD done!")
   colnames(Prop) <- colnames(data.matrix)
   dim(Prop)
   
+  print("ICTD_round1 DONE!!!")
   return(Prop)
   
   
@@ -336,7 +362,7 @@ ICTD_round1 <- function(data_bulk)
 
 
 #--------------pipeline-------------
-print("test complete function! use input data")
+print("test ictd_round1!")
 
 
 print(list.files())
@@ -354,7 +380,7 @@ dataset_name <- as.character(input_df$dataset.name)
 # Extract the names of the expression files that use gene name
 expression_files <- as.character(input_df$native.expr.file)
 
-
+input_combine <- c()
 output_all_ds <- c()
 for(i in 1:length(expression_files))
 {
@@ -364,9 +390,12 @@ for(i in 1:length(expression_files))
   rownames(data_tmp) <- data_tmp[,1]
   data_tmp <- data_tmp[,-1]
   #data_bulk <- data_tmp
-  #data_bulk <- GSE72056_diri_example[[1]]
   data_tmp <- as.matrix(data_tmp)
   data_tmp[is.na(data_tmp)] <- 0
+
+  print(paste(ff_tmp, " dim is :"))
+  print(dim(data_tmp))
+  
   ictd_result <- ICTD_round1(data_tmp)
   ictd_prop <- ictd_result
   
@@ -395,5 +424,6 @@ print("output file dim:")
 print(dim(output_all_ds))
 print("output :::")
 print(output_all_ds)
+
 
 
