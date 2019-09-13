@@ -352,6 +352,41 @@ BCV_ttest2_NA<-function(data0,rounds=20,slice0=2,maxrank0=30,msep_cut=0.001)
   return(pp)       
 }
 
+clean_rank1_module_new <- function (data_c, module_info, module_rank, st0 = 8, RR = 50, 
+          msep_cut0 = 0.01) 
+{
+  N <- 0
+  nc <- c()
+  module_new <- list()
+  for (i in 1:length(module_info)) {
+    if (module_rank[i] == 1) {
+      N <- N + 1
+      nc <- c(nc, names(module_info)[i])
+      module_new[[N]] <- module_info[[i]]
+    }
+    if (module_rank[i] > 1) {
+      ccc <- module_info[[i]]
+      st <- st0
+      rr <- 1
+      while ((rr == 1) & (st <= length(ccc))) {
+        tg_genes <- c(ccc[1:st])
+        pp <- BCV_ttest2_NA(data_c[tg_genes, ], rounds = RR, 
+                         maxrank0 = 5, msep_cut = msep_cut0)
+        rr <- sum(pp < 0.001)
+        st <- st + 1
+      }
+      tg_genes <- tg_genes[-length(tg_genes)]
+      if (length(tg_genes) > st0) {
+        N <- N + 1
+        nc <- c(nc, names(module_info)[i])
+        module_new[[N]] <- tg_genes
+      }
+    }
+  }
+  names(module_new) <- nc
+  return(module_new)
+}
+
 R1_list_filtering_step1_new_BCV2 <- function (list_c2, data_CORS_cancer, max_cut = 20, cutn0 = 20, 
                                               cut10 = 0.8, IM_id_list, immune_cell_uni_table = immune_cell_uni_table0_GPL570) 
 {
