@@ -1,6 +1,9 @@
 
 
-print("test docker with Hello word!")
+print("test docker with M1_2!")
+print("test docker with M1_2!")
+print("test docker with M1_2!")
+
 
 # Then, test the ICTD
 library('ICTD')
@@ -613,8 +616,8 @@ ICTD_round1 <- function(data_bulk)
   data22_code <- data22[intersect(rownames(data22), TCGA_ensem_annotation[which(TCGA_ensem_annotation[,3] == "protein_coding" & TCGA_ensem_annotation[,4] != ""), 4]), ]
   data23 <- data22[intersect(rownames(data22), TCGA_ensem_annotation[which(TCGA_ensem_annotation[,3] == "protein_coding" & TCGA_ensem_annotation[,4] != ""), 4]), ]
   #data23 <- normalize_data2(data23)
-  data23 <- normalize_data2_rm_sdZero(data23)
-  data_CORS_cancer <- data23
+  data01 <- normalize_data2_rm_sdZero(data23)
+  data_CORS_cancer <- data01
   data_ccc <- data23
   list_c1 <- MRHCA_IM_compute_MR(data_CORS_cancer = data_ccc, IM_id_list, immune_cell_uni_table = immune_cell_uni_table0_GS)
   MR_IM_result_new_c <- MRHCA_IM_compute_full_pub_new(data_CORS_cancer = data_ccc, list_c = list_c1, IM_id_list, immune_cell_uni_table = immune_cell_uni_table0_GS)
@@ -758,6 +761,7 @@ ICTD_round1 <- function(data_bulk)
   }
   print("!")
   names(tg_markers)<-names(LM22_test_list1_plus_unique_core)[tg_ids]
+  print(tg_markers)
   for(i in 1:length(tg_markers))
   {
     if(length(tg_markers[[i]])==1)
@@ -765,7 +769,8 @@ ICTD_round1 <- function(data_bulk)
       tg_markers[[i]]<-top5_SVD_cor(data23,LM22_test_list1_plus_unique_core[[tg_ids[i]]]) ##################################################
     }
   }
-  
+  print("!!")
+  print(tg_markers)
   
   l4<-tg_markers
   b4<-Compute_Rbase_SVD(data.matrix,l4)
