@@ -766,7 +766,7 @@ ICTD_round1 <- function(data_bulk)
   {
     if(length(tg_markers[[i]])==1)
     {
-      tg_markers[[i]]<-top5_SVD_cor(data23,LM22_test_list1_plus_unique_core[[tg_ids[i]]]) ##################################################
+      tg_markers[[i]]<-top5_SVD_cor(data01,LM22_test_list1_plus_unique_core[[tg_ids[i]]]) ##################################################
     }
   }
   print("!!")
@@ -830,6 +830,7 @@ for(i in 1:length(expression_files))
   data_tmp <- as.matrix(data_tmp)
   data_tmp[is.na(data_tmp)] <- 0
   
+  print(paste("data id :", i,sep=""))
   print(paste(ff_tmp, " dim is :"))
   print(dim(data_tmp))
   print(data_tmp[1:5,1:5])
