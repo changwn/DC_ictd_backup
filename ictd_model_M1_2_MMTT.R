@@ -1220,9 +1220,6 @@ ICTD_round1 <- function(data_bulk)
   }
   qnmf_result_c_TT <- run_NMF(NMF_self_cT,RR0=1,maxIter=20000, tProp=tProp0)
   
-  h1<-heatmap.2(qnmf_result_c_TT$U,Rowv=T,Colv =F,scale="none",
-                col=my_palette,breaks=colors,density.info="none",dendrogram="both",
-                trace="none",margin=c(10,10),cexRow=0.7,cexCol=1,main=tg_key0)
   
   b4_TT<-t(qnmf_result_c_TT$V)
   b4[rownames(b4_TT),]<-b4_TT
