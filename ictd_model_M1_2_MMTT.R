@@ -709,15 +709,7 @@ top5_SVD_cor<-function(data_c,tg_genes)
 
 ICTD_round1 <- function(data_bulk)
 {
-  #1
-  # load('TCGA-COAD_FPKM_T.RData')    #load COAD to test
-  # rownames(data_t) <- gsub('^.*\\|', '', rownames(data_t))
-  # rowname_stay <- setdiff(unique(rownames(data_t)), "" )
-  # data_t <- data_t[rowname_stay,]
-  # data_bulk <- data_t
-  # #2
-  # data_bulk <- GSE72056_diri_example[[1]]
-  # 
+
   data.matrix = data_bulk
   if (length(colnames(data.matrix)) == 0) {
     warning("input data do NOT have colnames")
@@ -727,7 +719,7 @@ ICTD_round1 <- function(data_bulk)
   if (max(data.matrix) > 30) {
     d.matrix <- log(data.matrix + 1)
     d.matrix <- as.matrix(d.matrix)
-    print("do log because data > 20!")
+    print("calu log because data > 20!")
   }else{
     d.matrix <- as.matrix(data.matrix)
   }
@@ -738,25 +730,30 @@ ICTD_round1 <- function(data_bulk)
   data22_code <- data22[intersect(rownames(data22), TCGA_ensem_annotation[which(TCGA_ensem_annotation[,3] == "protein_coding" & TCGA_ensem_annotation[,4] != ""), 4]), ]
   data23 <- data22[intersect(rownames(data22), TCGA_ensem_annotation[which(TCGA_ensem_annotation[,3] == "protein_coding" & TCGA_ensem_annotation[,4] != ""), 4]), ]
   #data23 <- normalize_data2(data23)
-  data23 <- normalize_data2_rm_sdZero(data23)
-  data_CORS_cancer <- data23
-  data_ccc <- data23
+  data01 <- normalize_data2_rm_sdZero(data23)
+  data_CORS_cancer <- data01
+  data_ccc <- data_CORS_cancer
   list_c1 <- MRHCA_IM_compute_MR(data_CORS_cancer = data_ccc, IM_id_list, immune_cell_uni_table = immune_cell_uni_table0_GS)
   MR_IM_result_new_c <- MRHCA_IM_compute_full_pub_new(data_CORS_cancer = data_ccc, list_c = list_c1, IM_id_list, immune_cell_uni_table = immune_cell_uni_table0_GS)
-  tg_key = "nonono"
+  tg_key_c = "nonono"
+  
+  #update data0
+  data0 <- data.matrix
+  
+  
   
   list_new_c1<-Process_MR_IM_result_new(MR_IM_result_new_c,tg_key_c=tg_key0,cell_type_enrich_cut=0.4,cor_cut0=0.8,num_cut=6,num_cut2=5,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)
-  R1_filter_step1_results_new1<-R1_list_filtering_step1_new_BCV2(list_new_c1,data_CORS_cancer=data_ccc,max_cut=10,cutn0=6,cut10=0.8,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)#cut10=0.8 for RNA-seq, cut10=0.75 for microarray, cut10=0.85 for scRNA-seq simulated data
+  R1_filter_step1_results_new1<-R1_list_filtering_step1_new(list_new_c1,data_CORS_cancer=data_ccc,max_cut=10,cutn0=6,cut10=0.8,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)#cut10=0.8 for RNA-seq, cut10=0.75 for microarray, cut10=0.85 for scRNA-seq simulated data
   
   aaa1<-compute_jaccard2(R1_filter_step1_results_new1[[4]],LM22_test_list1_plus)
   
   list_new_c2<-Process_MR_IM_result_new(MR_IM_result_new_c,tg_key_c=tg_key0,cell_type_enrich_cut=0.4,cor_cut0=0.75,num_cut=6,num_cut2=5,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)
-  R1_filter_step1_results_new2<-R1_list_filtering_step1_new_BCV2(list_new_c2,data_CORS_cancer=data_ccc,max_cut=10,cutn0=6,cut10=0.75,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)#cut10=0.8 for RNA-seq, cut10=0.75 for microarray, cut10=0.85 for scRNA-seq simulated data
+  R1_filter_step1_results_new2<-R1_list_filtering_step1_new(list_new_c2,data_CORS_cancer=data_ccc,max_cut=10,cutn0=6,cut10=0.75,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)#cut10=0.8 for RNA-seq, cut10=0.75 for microarray, cut10=0.85 for scRNA-seq simulated data
   
   aaa2<-compute_jaccard2(R1_filter_step1_results_new2[[4]],LM22_test_list1_plus)
   
   list_new_c3<-Process_MR_IM_result_new(MR_IM_result_new_c,tg_key_c=tg_key0,cell_type_enrich_cut=0.25,cor_cut0=0.65,num_cut=6,num_cut2=5,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)
-  R1_filter_step1_results_new3<-R1_list_filtering_step1_new_BCV2(list_new_c3,data_CORS_cancer=data_ccc,max_cut=6,cutn0=6,cut10=0.6,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)#cut10=0.8 for RNA-seq, cut10=0.75 for microarray, cut10=0.85 for scRNA-seq simulated data
+  R1_filter_step1_results_new3<-R1_list_filtering_step1_new(list_new_c3,data_CORS_cancer=data_ccc,max_cut=6,cutn0=6,cut10=0.6,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)#cut10=0.8 for RNA-seq, cut10=0.75 for microarray, cut10=0.85 for scRNA-seq simulated data
   
   aaa3<-compute_jaccard2(R1_filter_step1_results_new3[[4]],LM22_test_list1_plus)
   
@@ -1086,7 +1083,7 @@ ICTD_round1 <- function(data_bulk)
   T_ALL<-c("CD2","CD3E","CD3G","CD3D","IL2RB","LCK","TIGIT","CD6","CD7","IL2RB","CCR5","CXCR3")
   T_CD4<-LM22_test_list1_plus_unique[[2]]
   T_CD8<-setdiff(unique(sort(c(LM22_test_list1_plus_unique[[3]],LM22_test_list1_plus_unique_core[[3]]))),c("CD2","CD3E","CD3G","GZMB" ,"GZMK","KLRG1"))
-  T_GZM<-c("PRF1","GZMA","GZMB","GZMH","GZMG","NKG7","KLRD1","GNLY")
+  T_GZM<-c("PRF1","GZMA","GZMB","GZMH","GZMK","GZMG","NKG7","KLRD1","GNLY")
   NK_gg<-setdiff(unique(c(LM22_test_list1_plus_unique[[4]],LM22_test_list1_plus_unique_core[[4]])),c("CCND2","CDK6","ZNF135",T_GZM,T_CD8,T_ALL))
   
   TT_core2<-list(T_ALL,T_GZM,T_CD4,T_CD8,NK_gg)
