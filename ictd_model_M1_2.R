@@ -762,25 +762,46 @@ ICTD_round1 <- function(data_bulk)
   print("!")
   names(tg_markers)<-names(LM22_test_list1_plus_unique_core)[tg_ids]
   print(tg_markers)
+  tg_markers_new<-list()
+  N<-0
+  nn<-c()
   for(i in 1:length(tg_markers))
   {
+    if(length(tg_markers[[i]])>1)
+    {
+      N<-N+1
+      tg_markers_new[[N]]<-tg_markers[[i]]
+      nn<-c(nn,names(tg_markers)[i])
+    }
     if(length(tg_markers[[i]])==1)
     {
       tg_ccc<-intersect(rownames(data01),LM22_test_list1_plus_unique_core[[tg_ids[i]]])
-      print("debug 111")
-      print(i)
-      print(tg_ccc)
-      print(sum(is.na(data01[tg_ccc,])))
-      print(c(min(data01[tg_ccc,]),max(data01[tg_ccc,])))
-      tg_markers[[i]]<-top5_SVD_cor(data01,LM22_test_list1_plus_unique_core[[tg_ids[i]]]) ##################################################
+      # print("debug 111")
+      # print(i)
+      # print(tg_ccc)
+      # print(sum(is.na(data01[tg_ccc,])))
+      # print(c(min(data01[tg_ccc,]),max(data01[tg_ccc,])))
+      if(length(tg_ccc)>3)
+      {
+        tg_markers[[i]]<-top5_SVD_cor(data01,LM22_test_list1_plus_unique_core[[tg_ids[i]]]) ##################################################
+        N<-N+1
+        tg_markers_new[[N]]<-tg_markers[[i]]
+        nn<-c(nn,names(tg_markers)[i])
+      }
     }
   }
+  names(tg_markers_new)<-nn
   print("!!")
   print(tg_markers)
   
-  l4<-tg_markers
-  b4<-Compute_Rbase_SVD(data.matrix,l4)
-  colnames(b4)<-colnames(data.matrix)
+  b4<-matrix(0,length(tg_markers),ncol(data01))
+  rownames(b4)<-names(tg_markers)
+  colnames(b4)<-colnames(data01)
+  
+  l4<-tg_markers_new
+  b4_1<-Compute_Rbase_SVD(data.matrix,l4)
+  colnames(b4_1)<-colnames(data.matrix)
+  b4[rownames(b4_1),]<-b4_1
   Prop <- b4
   rownames(Prop) <- c('B.cells','CD4.T.cells','CD8.T.cells','NK.cells','neutrophils','monocytic.lineage','fibroblasts','endothelial.cells')
   
