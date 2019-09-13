@@ -25,10 +25,14 @@ docker run --network none -v /Users/chang/Documents/dc_ictd/fast_lane_dir/input/
 #-------------------------
 
 docker login docker.synapse.org
+chang91
+cwn3821365
+
+docker logout docker.synapse.org
 
 #docker image
 
-#push 
+#push ICTD account
 #syntax docker push docker.synapse.org/<Your project ID>/<Repo name>:<Tag>
 docker tag ictdtest:v1.0 docker.synapse.org/syn20551227/ictdtest:v1.0
 docker image ls
@@ -36,3 +40,25 @@ docker push docker.synapse.org/syn20551227/ictdtest
 
 #view docker
 https://www.synapse.org/#!Synapse:syn20551227/docker
+
+#-----------------------
+#push to test account
+#-----------------------
+docker login docker.synapse.org --username=hearthewind 
+hearthewind
+cwn3821365
+docker images ls
+
+docker tag ictdtest:v1.0 docker.synapse.org/syn20757641/test:v1.0
+
+
+
+docker image ls
+docker push docker.synapse.org/syn20757641/ictdtest
+
+docker push docker.synapse.org/syn20757641/test:v1.0
+
+
+
+
+
