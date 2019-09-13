@@ -4,7 +4,10 @@ print("test docker with Hello word!")
 
 # Then, test the ICTD
 library('ICTD')
+#devtools::install_github("GfellerLab/EPIC", build_vignettes=TRUE)
+library('EPIC')
 library('readr')
+library('nnls')
 #data_bulk = GSE72056_diri_example[[1]]
 #print(data_bulk[1:5,1:6])
 # ictd_result <- ICTD(data_bulk)
@@ -28,6 +31,36 @@ ictd_2_output <- function(ictd_prop, dataset.name)
   celltype_col <- rep(c('CD4.T.cells','CD8.T.cells','NK.cells','B.cells','monocytic.lineage','neutrophils','endothelial.cells','fibroblasts'), ncol(ictd_prop))
   #4
   prediction_col <- rep(runif(8,min=0.01,max=0.8), ncol(ictd_prop))  
+  
+  #bind
+  output_df <- data.frame(dataset.name=dataset.name,sample.id=sample_col,cell.type=celltype_col,prediction=prediction_col)
+  
+  return(output_df)
+}
+
+ictd_2_output_real <- function(ictd_prop, dataset.name)
+{
+  #2
+  col_name <- matrix(colnames(ictd_prop),1,length(colnames(ictd_prop)))
+  vv <- c()
+  for(i in 1:length(col_name))
+  {
+    vv <- c(vv, rep(col_name[i], 8))  #8 cell types
+  }
+  sample_col <- vv
+  
+  #3  
+  celltype_col <- rep(c('CD4.T.cells','CD8.T.cells','NK.cells','B.cells','monocytic.lineage','neutrophils','endothelial.cells','fibroblasts'), ncol(ictd_prop))
+  #4
+  #prediction_col <- rep(runif(8,min=0.01,max=0.8), ncol(ictd_prop))  
+  prediction_col <- c()
+  cell_type_order <- c('CD4.T.cells','CD8.T.cells','NK.cells','B.cells','monocytic.lineage','neutrophils','endothelial.cells','fibroblasts')
+  for(i in 1:length(col_name))
+  {
+    prop_tmp <- ictd_prop[cell_type_order,i]
+    prediction_col <- c(prediction_col, prop_tmp)
+  }
+  
   
   #bind
   output_df <- data.frame(dataset.name=dataset.name,sample.id=sample_col,cell.type=celltype_col,prediction=prediction_col)
@@ -80,6 +113,8 @@ pick_good_basis <- function(data.matrix, tg_R1_lists, loca_in_R4_tmp)
   
   return(tg_R1_lists[[loca_in_R4_tmp[max_cor_loca]]])
 }
+
+
 
 select_R4_8_cellmk <- function(data.matrix,tg_R1_lists)
 {
@@ -193,8 +228,60 @@ select_R4_8_cellmk <- function(data.matrix,tg_R1_lists)
   return(eight_cell_mk)
 }
 
+# seperate_T4_8_NK <- function(data.matrix, eight_mk_list)
+# {
+#   #load LM22 signature
+#   LM22 <- read.table("LM22.txt", sep="\t", header=T)
+#   rownames(LM22) <- LM22[,1]
+#   LM22 <- LM22[,-1]
+#   LM22 <- as.matrix(LM22)
+#   LM22_score <- cal_Zscore_signature(LM22)
+#   
+#   #1. CD4T
+#   LM22_CD4T_col <- 5
+#   LM22_CD4T_list1 <- names(which(LM22_score[,LM22_CD4T_col] == 1))
+#   LM22_CD4T_col <- 6
+#   LM22_CD4T_list2 <- names(which(LM22_score[,LM22_CD4T_col] == 1))
+#   LM22_CD4T_col <- 7
+#   LM22_CD4T_list3 <- names(which(LM22_score[,LM22_CD4T_col] == 1))
+#   LM22_CD4T_all <- intersect(c(LM22_CD4T_list1,LM22_CD4T_list2,LM22_CD4T_list3), rownames(data.matrix))
+#   LM22_CD4_tg_list <- list(LM22_CD4T_all)
+#   names(LM22_CD4_tg_list) <- c("CD4T_all")
+#   
+#   tProp_CD4T <- Compute_Rbase_SVD(data.matrix, LM22_CD4_tg_list)
+#   
+#   cor(t(data.matrix[eight_cell_mk[[6]],]), t(tProp_CD4T) )
+#   
+#   eight_mk_list[[6]]
+#   
+#   monocyte_LM_loca <- 13
+#   
+# }
+
+EPIC_NKT48_mk <- function()
+{
+  sigGeneEpic <- EPIC::TRef$sigGenes
+  ref <- EPIC::TRef$refProfiles
+  hhh <- ref[sigGeneEpic,]
+  epic_cell_marker <- extract_marker(hhh,method="EPIC",add=T)
+  
+  TNK3_list <- list(epic_cell_marker[["CD4_mark"]], epic_cell_marker[["CD8_mark"]], epic_cell_marker[["NK_mark"]])
+  names(TNK3_list) <- c("CD4.T.cells","CD8.T.cells","NK.cells")
+  
+  return(TNK3_list)
+}
+
 ICTD_round1 <- function(data_bulk)
 {
+  #1
+  load('TCGA-COAD_FPKM_T.RData')    #load COAD to test
+  rownames(data_t) <- gsub('^.*\\|', '', rownames(data_t))
+  rowname_stay <- setdiff(unique(rownames(data_t)), "" )
+  data_t <- data_t[rowname_stay,]
+  data_bulk <- data_t
+  #2
+  data_bulk <- GSE72056_diri_example[[1]]
+  
   data.matrix = data_bulk
   if (length(colnames(data.matrix)) == 0) {
     warning("input data do NOT have colnames")
@@ -226,20 +313,21 @@ ICTD_round1 <- function(data_bulk)
   print(length(tg_R1_lists))
   
   eight_mk_list <- select_R4_8_cellmk(data.matrix,tg_R1_lists)    #length is 6 although contains 8 cell types
-  Prop <- Compute_Rbase_SVD(data.matrix, eight_mk_list[1:5])  #last element is mixture of TNK, use NMF
+  epic_mk <- EPIC_NKT48_mk()
+  two_list_combine <- c(eight_mk_list[1:5], epic_mk)
+  Prop <- Compute_Rbase_SVD(data.matrix, two_list_combine)  #last element is mixture of TNK, use NMF
   colnames(Prop) <- colnames(data.matrix)
   dim(Prop)
+  
+  return(Prop)
+  
   
   #NMF  
   #NMF test and debug
   #how to build matrix C?
   #test and debug
   
-  
-  
-  
-  
-  
+
 }
 
 #----------------------function part finish---------
@@ -275,18 +363,23 @@ for(i in 1:length(expression_files))
   data_tmp <- read.csv(ff_tmp)
   rownames(data_tmp) <- data_tmp[,1]
   data_tmp <- data_tmp[,-1]
-  data_bulk <- data_tmp
-  data_bulk <- GSE72056_diri_example[[1]]
+  #data_bulk <- data_tmp
+  #data_bulk <- GSE72056_diri_example[[1]]
   ictd_result <- ICTD_round1(data_tmp)
+  ictd_prop <- ictd_result
   
   
-  # fake output!!!
-  ictd_prop <- data_tmp[1:12,]
+  # # a)fake output!!!
+  # ictd_prop <- data_tmp[1:12,]
+  # dn_tmp <- unlist(strsplit(expression_files[i],split='.',fixed=T))[[1]]
+  # output_tmp <- ictd_2_output(ictd_prop, dn_tmp)
+  # #combine prediction into big dataframe
+  # output_all_ds <- rbind(output_all_ds, output_tmp)
+  #b) real output!!!
   dn_tmp <- unlist(strsplit(expression_files[i],split='.',fixed=T))[[1]]
   output_tmp <- ictd_2_output(ictd_prop, dn_tmp)
   #combine prediction into big dataframe
   output_all_ds <- rbind(output_all_ds, output_tmp)
-  
 }
 
 # Create the directory the output will go into
