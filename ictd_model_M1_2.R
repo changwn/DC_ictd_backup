@@ -640,6 +640,10 @@ ICTD_round1 <- function(data_bulk)
   tg_markers<-list()
   for(i in 1:length(tg_ids))
   {
+    tg_markers[[i]]<-""
+  }
+  for(i in 1:length(tg_ids))
+  {
     #tg_CCC<-list()
     st<-0
     if(sum(aaa1[,tg_ids[i]]>0.7)>0)
@@ -675,6 +679,7 @@ ICTD_round1 <- function(data_bulk)
           st<-1
         }
       }
+      print(c(i,1))
     }
     if((st==0)&(sum(aaa2[,tg_ids[i]]>0.7)>0))
     {
@@ -709,6 +714,7 @@ ICTD_round1 <- function(data_bulk)
           st<-1
         }
       }
+      print(c(i,2))
     }
     if((st==0)&(sum(aaa3[,tg_ids[i]]>0.7)>0))
     {
@@ -743,12 +749,14 @@ ICTD_round1 <- function(data_bulk)
           st<-1
         }
       }
+      print(c(i,3))
     }
     if(st==0)
     {
       tg_markers[[i]]<-0
     }
   }
+  print("!")
   names(tg_markers)<-names(LM22_test_list1_plus_unique_core)[tg_ids]
   for(i in 1:length(tg_markers))
   {
