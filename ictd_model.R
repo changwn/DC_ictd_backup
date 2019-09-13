@@ -274,13 +274,13 @@ EPIC_NKT48_mk <- function()
 ICTD_round1 <- function(data_bulk)
 {
   #1
-  load('TCGA-COAD_FPKM_T.RData')    #load COAD to test
-  rownames(data_t) <- gsub('^.*\\|', '', rownames(data_t))
-  rowname_stay <- setdiff(unique(rownames(data_t)), "" )
-  data_t <- data_t[rowname_stay,]
-  data_bulk <- data_t
-  #2
-  data_bulk <- GSE72056_diri_example[[1]]
+  # load('TCGA-COAD_FPKM_T.RData')    #load COAD to test
+  # rownames(data_t) <- gsub('^.*\\|', '', rownames(data_t))
+  # rowname_stay <- setdiff(unique(rownames(data_t)), "" )
+  # data_t <- data_t[rowname_stay,]
+  # data_bulk <- data_t
+  # #2
+  # data_bulk <- GSE72056_diri_example[[1]]
   
   data.matrix = data_bulk
   if (length(colnames(data.matrix)) == 0) {
@@ -336,7 +336,7 @@ ICTD_round1 <- function(data_bulk)
 
 
 #--------------pipeline-------------
-print("test ictd_round1!")
+print("test complete function! use input data")
 
 
 print(list.files())
@@ -365,6 +365,8 @@ for(i in 1:length(expression_files))
   data_tmp <- data_tmp[,-1]
   #data_bulk <- data_tmp
   #data_bulk <- GSE72056_diri_example[[1]]
+  data_tmp <- as.matrix(data_tmp)
+  data_tmp[is.na(data_tmp)] <- 0
   ictd_result <- ICTD_round1(data_tmp)
   ictd_prop <- ictd_result
   
@@ -393,6 +395,5 @@ print("output file dim:")
 print(dim(output_all_ds))
 print("output :::")
 print(output_all_ds)
-
 
 
