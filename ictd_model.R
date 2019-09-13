@@ -294,6 +294,25 @@ filt_tg_list_by_dataName <- function(two_list_combine,data.matrix)
   
 }
 
+rm_NA_row <- function(data0)
+{
+  
+  data1 <- data0[complete.cases(data0), ]
+  print(paste("rm ", nrow(data0)-nrow(data1), " --rows", sep=""))
+  
+  return(data1)
+}
+
+normalize_data2_rm_sdZero <- function (data0) 
+{
+  data1 <- data0
+  for (i in 1:nrow(data1)) {
+    data1[i, ] <- (data1[i, ] - mean(data1[i, ]))/sd(data1[i, ])
+  }
+  data2 <- rm_NA_row(data1)
+  return(data2)
+}
+
 ICTD_round1 <- function(data_bulk)
 {
   #1
@@ -324,7 +343,8 @@ ICTD_round1 <- function(data_bulk)
   data22 <- data21[unique(rownames(data21)), ]
   data22_code <- data22[intersect(rownames(data22), TCGA_ensem_annotation[which(TCGA_ensem_annotation[,3] == "protein_coding" & TCGA_ensem_annotation[,4] != ""), 4]), ]
   data23 <- data22[intersect(rownames(data22), TCGA_ensem_annotation[which(TCGA_ensem_annotation[,3] == "protein_coding" & TCGA_ensem_annotation[,4] != ""), 4]), ]
-  data23 <- normalize_data2(data23)
+  #data23 <- normalize_data2(data23)
+  data23 <- normalize_data2_rm_sdZero(data23)
   data_CORS_cancer <- data23
   data_ccc <- data23
   list_c1 <- MRHCA_IM_compute_MR(data_CORS_cancer = data_ccc, IM_id_list, immune_cell_uni_table = immune_cell_uni_table0_GS)
