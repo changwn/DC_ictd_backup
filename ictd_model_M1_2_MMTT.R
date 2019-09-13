@@ -1,6 +1,8 @@
 
 
-print("test docker with Hello word!")
+print("test docker with MMTT!")
+print("test docker with MMTT!")
+print("test docker with MMTT!")
 
 # Then, test the ICTD
 library('ICTD')
@@ -743,17 +745,17 @@ ICTD_round1 <- function(data_bulk)
   
   
   list_new_c1<-Process_MR_IM_result_new(MR_IM_result_new_c,tg_key_c=tg_key0,cell_type_enrich_cut=0.4,cor_cut0=0.8,num_cut=6,num_cut2=5,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)
-  R1_filter_step1_results_new1<-R1_list_filtering_step1_new(list_new_c1,data_CORS_cancer=data_ccc,max_cut=10,cutn0=6,cut10=0.8,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)#cut10=0.8 for RNA-seq, cut10=0.75 for microarray, cut10=0.85 for scRNA-seq simulated data
+  R1_filter_step1_results_new1<-R1_list_filtering_step1_new_BCV2(list_new_c1,data_CORS_cancer=data_ccc,max_cut=10,cutn0=6,cut10=0.8,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)#cut10=0.8 for RNA-seq, cut10=0.75 for microarray, cut10=0.85 for scRNA-seq simulated data
   
   aaa1<-compute_jaccard2(R1_filter_step1_results_new1[[4]],LM22_test_list1_plus)
   
   list_new_c2<-Process_MR_IM_result_new(MR_IM_result_new_c,tg_key_c=tg_key0,cell_type_enrich_cut=0.4,cor_cut0=0.75,num_cut=6,num_cut2=5,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)
-  R1_filter_step1_results_new2<-R1_list_filtering_step1_new(list_new_c2,data_CORS_cancer=data_ccc,max_cut=10,cutn0=6,cut10=0.75,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)#cut10=0.8 for RNA-seq, cut10=0.75 for microarray, cut10=0.85 for scRNA-seq simulated data
+  R1_filter_step1_results_new2<-R1_list_filtering_step1_new_BCV2(list_new_c2,data_CORS_cancer=data_ccc,max_cut=10,cutn0=6,cut10=0.75,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)#cut10=0.8 for RNA-seq, cut10=0.75 for microarray, cut10=0.85 for scRNA-seq simulated data
   
   aaa2<-compute_jaccard2(R1_filter_step1_results_new2[[4]],LM22_test_list1_plus)
   
   list_new_c3<-Process_MR_IM_result_new(MR_IM_result_new_c,tg_key_c=tg_key0,cell_type_enrich_cut=0.25,cor_cut0=0.65,num_cut=6,num_cut2=5,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)
-  R1_filter_step1_results_new3<-R1_list_filtering_step1_new(list_new_c3,data_CORS_cancer=data_ccc,max_cut=6,cutn0=6,cut10=0.6,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)#cut10=0.8 for RNA-seq, cut10=0.75 for microarray, cut10=0.85 for scRNA-seq simulated data
+  R1_filter_step1_results_new3<-R1_list_filtering_step1_new_BCV2(list_new_c3,data_CORS_cancer=data_ccc,max_cut=6,cutn0=6,cut10=0.6,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)#cut10=0.8 for RNA-seq, cut10=0.75 for microarray, cut10=0.85 for scRNA-seq simulated data
   
   aaa3<-compute_jaccard2(R1_filter_step1_results_new3[[4]],LM22_test_list1_plus)
   
