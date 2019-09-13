@@ -23,6 +23,10 @@ cv.svd.gabriel <- bcv:::cv.svd.gabriel
 # ictd_result[[2]]
 #print(sessionInfo())
 
+load("LM22_marker_list.RData")
+MM_core_list<-list(LM22_test_list1_plus_unique_core[[5]],LM22_test_list1_plus_unique_core[[6]])
+
+
 
 #----------------function part---------------
 ictd_2_output <- function(ictd_prop, dataset.name)
@@ -625,7 +629,7 @@ NMF_method1_test_version4_MM<-function(tg_list, data_ng, data_normalized, max_ES
 
 
 
-load("LM22_marker_list.RData")
+
 generate_unique_list<-function(tg_list,n_cut=1)
 {
   aaa<-c()
@@ -885,16 +889,9 @@ ICTD_round1 <- function(data_bulk)
   l4<-tg_markers
   b4<-Compute_Rbase_SVD(d.matrix,l4)
   colnames(b4)<-colnames(d.matrix)
-  
-  
-  
-  
-  
-  
-  list(LM22_test_list1_plus_unique_core[[2]],LM22_test_list1_plus_unique_core[[3]])
-  
+
   ################################################################
-  MM_core_list<-list(LM22_test_list1_plus_unique_core[[5]],LM22_test_list1_plus_unique_core[[6]])
+ 
   
   fff<-list()
   fff[[1]]<-unique(c(LM22_test_list1_plus[[5]],LM22_test_list1_plus[[6]]))
@@ -1007,23 +1004,23 @@ ICTD_round1 <- function(data_bulk)
     tg_markers<-tg_list_MM
   }
   tProp0<-matrix(runif(ncol(d.matrix)*3,0,1),3,ncol(d.matrix))
-  ccc3<-NMF_method1_test_version4_MM(tg_list=tg_markers,data_ng=data0,data_normalized=data_CORS_cancer,max_ES_cut=0.2,max_ES_cut2=0.3,tProp=tProp0,NMF_RR=0.5)
-  if(ncol(ccc3[[1]]$V)==2)
-  {
-    b4_MM<-ccc3[[1]]$V
-    nn<-colnames(b4_MM)
-    for(i in 1:length(nn))
-    {
-      nn[i]<-unlist(strsplit(nn[i],"_"))[1]
-    }
-    colnames(b4_MM)<-nn
-    b4_MM<-t(b4_MM)
-  }
-  else
-  {
-    b4_MM<-Compute_Rbase_SVD(data0,tg_markers)
-    colnames(b4_MM)<-colnames(data0)
-  }
+  #ccc3<-NMF_method1_test_version4_MM(tg_list=tg_markers,data_ng=data0,data_normalized=data_CORS_cancer,max_ES_cut=0.2,max_ES_cut2=0.3,tProp=tProp0,NMF_RR=0.5)
+  #if(ncol(ccc3[[1]]$V)==2)
+  #{
+  #  b4_MM<-ccc3[[1]]$V
+  #  nn<-colnames(b4_MM)
+  #  for(i in 1:length(nn))
+  #  {
+  #     nn[i]<-unlist(strsplit(nn[i],"_"))[1]
+  #   }
+  #   colnames(b4_MM)<-nn
+  #   b4_MM<-t(b4_MM)
+  # }
+  # else
+  # {
+  b4_MM<-Compute_Rbase_SVD(data0,tg_markers)
+  colnames(b4_MM)<-colnames(data0)
+  # }
   b4[rownames(b4_MM),]<-b4_MM
   
   #################################################
@@ -1216,7 +1213,11 @@ ICTD_round1 <- function(data_bulk)
   names(NMF_self_cT)<-c("NMF_data" ,    "NMF_indi_all" ,"NMF_P_pre",    "S_indi" )
   
   
-  
+  for(i in 1:nrow(NMF_self_cT[[1]]))
+  {
+    print(rownames(NMF_self_cT[[1]])[i])
+    print(quantile(NMF_self_cT[[1]][i,],c(1:10/10)))
+  }
   qnmf_result_c_TT <- run_NMF(NMF_self_cT,RR0=1,maxIter=20000, tProp=tProp0)
   
   h1<-heatmap.2(qnmf_result_c_TT$U,Rowv=T,Colv =F,scale="none",
