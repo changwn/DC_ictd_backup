@@ -8,7 +8,13 @@ library('ICTD')
 library('EPIC')
 library('readr')
 library('nnls')
+#library('bcv')
+#print("dododododo lib bcv")
+#print(sessionInfo())
 
+#print(R1_list_filtering_step1_new_BCV2)
+cv.svd.gabriel <- bcv:::cv.svd.gabriel
+#print(cv.svd.gabriel)
 #data_bulk = GSE72056_diri_example[[1]]
 #print(data_bulk[1:5,1:6])
 # ictd_result <- ICTD(data_bulk)
