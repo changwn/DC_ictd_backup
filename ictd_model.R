@@ -8,9 +8,13 @@ library('ICTD')
 library('EPIC')
 library('readr')
 library('nnls')
-library('bcv')
-print("dododododo lib bcv")
-print(sessionInfo())
+#library('bcv')
+#print("dododododo lib bcv")
+#print(sessionInfo())
+
+#print(R1_list_filtering_step1_new_BCV2)
+cv.svd.gabriel <- bcv:::cv.svd.gabriel
+#print(cv.svd.gabriel)
 #data_bulk = GSE72056_diri_example[[1]]
 #print(data_bulk[1:5,1:6])
 # ictd_result <- ICTD(data_bulk)
@@ -318,7 +322,7 @@ normalize_data2_rm_sdZero <- function (data0)
 
 BCV_ttest2_NA<-function(data0,rounds=20,slice0=2,maxrank0=30,msep_cut=0.001)
 {
-  print("call new BCV test2 function !!!")
+  #print("call new BCV test2 function !!!")
   x<-data0
   fff_cc<-c()
   for(kk in 1:rounds)
@@ -329,7 +333,7 @@ BCV_ttest2_NA<-function(data0,rounds=20,slice0=2,maxrank0=30,msep_cut=0.001)
   pp<-c()
   ddd<-apply(fff_cc,2,mean,na.rm=T)
   #print("bcv ttest2 ddd:")
-  print(ddd)
+  # print(ddd)
   
   ddd<-ddd/sum(ddd)
   for(kk in 1:(ncol(fff_cc)-1))
@@ -513,7 +517,7 @@ ICTD_round1 <- function(data_bulk)
   two_list_combine <- c(eight_mk_list[1:5], epic_mk)
   two_list_combine_new <- filt_tg_list_by_dataName(two_list_combine,data.matrix)
   Prop <- Compute_Rbase_SVD(data.matrix, two_list_combine_new)  #last element is mixture of TNK, use NMF
-  print("SVD done!")
+  #print("SVD done!")
   colnames(Prop) <- colnames(data.matrix)
   dim(Prop)
   
@@ -568,7 +572,7 @@ for(i in 1:length(expression_files))
 
   print(paste(ff_tmp, " dim is :"))
   print(dim(data_tmp))
-  print(data_tmp[1:5,1:5])
+  print(data_tmp[1:5,1:2])
   ictd_result <- ICTD_round1(data_tmp)
   ictd_prop <- ictd_result
   
@@ -597,6 +601,5 @@ print("output file dim:")
 print(dim(output_all_ds))
 print("output :::")
 print(output_all_ds)
-
 
 
