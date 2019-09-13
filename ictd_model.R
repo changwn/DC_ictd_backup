@@ -314,6 +314,7 @@ ICTD_round1 <- function(data_bulk)
   if (max(data.matrix) > 20) {
     d.matrix <- log(data.matrix + 1)
     d.matrix <- as.matrix(d.matrix)
+    print("do log because data > 20!")
   }else{
     d.matrix <- as.matrix(data.matrix)
   }
@@ -371,14 +372,14 @@ print(getwd())
 print("what in the input folder:")
 print(list.files('input/'))
 input_df <- read.csv('input/input.csv')
-
+print(input_df)
 print('read <input.csv> done!')
 
 # Extract the names of each dataset
 dataset_name <- as.character(input_df$dataset.name)
 
 # Extract the names of the expression files that use gene name
-expression_files <- as.character(input_df$native.expr.file)
+expression_files <- as.character(input_df$hugo.expr.file)
 
 input_combine <- c()
 output_all_ds <- c()
@@ -395,7 +396,7 @@ for(i in 1:length(expression_files))
 
   print(paste(ff_tmp, " dim is :"))
   print(dim(data_tmp))
-  
+  print(data_tmp[1:5,1:5])
   ictd_result <- ICTD_round1(data_tmp)
   ictd_prop <- ictd_result
   
