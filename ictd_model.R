@@ -315,6 +315,7 @@ normalize_data2_rm_sdZero <- function (data0)
 
 BCV_ttest2<-function(data0,rounds=20,slice0=2,maxrank0=30,msep_cut=0.001)
 {
+  print("call new BCV test2 function !!!")
   x<-data0
   fff_cc<-c()
   for(kk in 1:rounds)
@@ -448,6 +449,7 @@ for(i in 1:length(expression_files))
   print(paste(ff_tmp, " dim is :"))
   print(dim(data_tmp))
   print(data_tmp[1:5,1:5])
+  print(BCV_ttest2)
   ictd_result <- ICTD_round1(data_tmp)
   ictd_prop <- ictd_result
   
