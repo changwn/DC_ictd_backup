@@ -1009,6 +1009,12 @@ ICTD_round1 <- function(data_bulk)
     tg_markers<-tg_list_MM
   }
   tProp0<-matrix(runif(ncol(d.matrix)*3,0,1),3,ncol(d.matrix))
+  print(tg_markers)
+  for(i in 1:length(tg_markers))
+  {
+    tg_markers[[i]]<-intersect(tg_markers[[i]],rownames(immune_cell_uni_table0_GS))
+  }
+  print(tg_markers)
   ccc3<-NMF_method1_test_version4_MM(tg_list=tg_markers,data_ng=data0,data_normalized=data_CORS_cancer,max_ES_cut=0.2,max_ES_cut2=0.3,tProp=tProp0,NMF_RR=0.5)
   if(ncol(ccc3[[1]]$V)==2)
   {
@@ -1189,6 +1195,13 @@ ICTD_round1 <- function(data_bulk)
   }
   names(tg_list_TT)<-nn
   
+  print(tg_list_TT)
+  for(i in 1:length(tg_list_TT))
+  {
+    tg_list_TT[[i]]<-intersect(tg_list_TT[[i]],rownames(immune_cell_uni_table0_GS))
+  }
+  print(tg_list_TT)
+
   tg_genes_all<-c()
   for(i in 1:length(tg_list_TT))
   {
