@@ -325,7 +325,7 @@ BCV_ttest2_NA<-function(data0,rounds=20,slice0=2,maxrank0=30,msep_cut=0.001)
   }
   pp<-c()
   ddd<-apply(fff_cc,2,mean,na.rm=T)
-  print("bcv ttest2 ddd:")
+  #print("bcv ttest2 ddd:")
   print(ddd)
   
   ddd<-ddd/sum(ddd)
@@ -566,7 +566,6 @@ for(i in 1:length(expression_files))
   print(paste(ff_tmp, " dim is :"))
   print(dim(data_tmp))
   print(data_tmp[1:5,1:5])
-  print(BCV_ttest2)
   ictd_result <- ICTD_round1(data_tmp)
   ictd_prop <- ictd_result
   
