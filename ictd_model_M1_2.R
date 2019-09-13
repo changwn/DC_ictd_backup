@@ -618,7 +618,7 @@ ICTD_round1 <- function(data_bulk)
   #data23 <- normalize_data2(data23)
   data01 <- normalize_data2_rm_sdZero(data23)
   data_CORS_cancer <- data01
-  data_ccc <- data23
+  data_ccc <- data_CORS_cancer
   list_c1 <- MRHCA_IM_compute_MR(data_CORS_cancer = data_ccc, IM_id_list, immune_cell_uni_table = immune_cell_uni_table0_GS)
   MR_IM_result_new_c <- MRHCA_IM_compute_full_pub_new(data_CORS_cancer = data_ccc, list_c = list_c1, IM_id_list, immune_cell_uni_table = immune_cell_uni_table0_GS)
   tg_key = "nonono"
