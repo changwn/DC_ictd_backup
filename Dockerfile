@@ -8,10 +8,10 @@ FROM zamora/r-devtools
 ## Install R packages in Docker image
 ##RUN Rscript -e 'source("http://bioconductor.org/biocLite.R"); biocLite("plyr")'
 ##RUN echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; options(repos = r);" > ~/.Rprofile
-#RUN Rscript -e "install.packages('readr')"
+RUN Rscript -e "install.packages('readr')"
 #RUN Rscript -e "sessionInfo()"
 RUN Rscript -e "library('devtools')"
-#RUN Rscript -e "devtools::install_github('GfellerLab/EPIC')"
+RUN Rscript -e "devtools::install_github('GfellerLab/EPIC')"
 
 #install dependent pkg
 #RUN Rscript -e 'print(sessionInfo() )'
@@ -34,6 +34,7 @@ RUN Rscript -e 'devtools::install_github("zy26/ICTD") '
 ##RUN chmod a+x /usr/local/bin/my_model.R
 #COPY ictd_model.R /usr/local/bin/
 #RUN chmod a+x /usr/local/bin/ictd_model.R
+COPY TCGA_IM_core_markers.RData ./
 COPY ictd_model.R ./
 RUN chmod a+x ictd_model.R
 
