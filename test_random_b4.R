@@ -114,6 +114,12 @@ for(i in 1:length(expression_files))
   output_all_ds <- rbind(output_all_ds, output_tmp)
   
 }
+print(dim(output_all_ds))
+
+eg...  #intent to cause bug
+
+
+
 
 # Create the directory the output will go into
 dir.create("output")
