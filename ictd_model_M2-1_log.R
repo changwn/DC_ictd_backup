@@ -642,7 +642,7 @@ ICTD_round1 <- function(data_bulk)
   list_new_c3<-Process_MR_IM_result_new(MR_IM_result_new_c,tg_key_c=tg_key0,cell_type_enrich_cut=0.25,cor_cut0=0.65,num_cut=6,num_cut2=5,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)
   R1_filter_step1_results_new3<-R1_list_filtering_step1_new_BCV2(list_new_c3,data_CORS_cancer=data_ccc,max_cut=6,cutn0=6,cut10=0.6,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)#cut10=0.8 for RNA-seq, cut10=0.75 for microarray, cut10=0.85 for scRNA-seq simulated data
   
-  
+  LM22_test_list1_plus_unique<-generate_unique_list(LM22_test_list1_plus)
   T_ALL<-c("CD2","CD3E","CD3G","CD3D","IL2RB","LCK","TIGIT","CD6","CD7","IL2RB","CCR5","CXCR3")
   T_CD4<-LM22_test_list1_plus_unique[[2]]
   T_CD8<-setdiff(unique(sort(c(LM22_test_list1_plus_unique[[3]],LM22_test_list1_plus_unique_core[[3]]))),c("CD2","CD3E","CD3G","GZMB" ,"GZMK","KLRG1"))
