@@ -602,13 +602,23 @@ ICTD_round1 <- function(data_bulk)
     colnames(data.matrix) <- paste("Setsample", 1:ncol(data.matrix),sep = "")
   }
   data.matrix <- rm_zero_row(data.matrix)
-  if (max(data.matrix) > 30) {
+  d.matrix <- as.matrix(data.matrix)
+  
+  if ((max(data.matrix)>30)&(min(data.matrix)>=0)) {
     d.matrix <- log(data.matrix + 1)
     d.matrix <- as.matrix(d.matrix)
-    print("do log because data > 20!")
-  }else{
-    d.matrix <- as.matrix(data.matrix)
+    print("calu log because data > 20!")
   }
+  if (min(data.matrix) < 0 ) {
+    d.matrix <- exp(data.matrix)
+    d.matrix<-as.matrix(d.matrix)
+    print("For negative : take exp!")
+  }
+  
+  print(d.matrix[1:5,1:5])
+  
+  
+  
   data0 <- d.matrix
   data2 <- data0
   data21 <- data2[order(-apply(data2, 1, mean)), ]
