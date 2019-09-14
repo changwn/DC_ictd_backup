@@ -761,7 +761,7 @@ ICTD_round1 <- function(data_bulk)
   }
   print("!")
   names(tg_markers)<-names(LM22_test_list1_plus_unique_core)[tg_ids]
-  print(tg_markers)
+  #print(tg_markers)
   tg_markers_new<-list()
   N<-0
   nn<-c()
