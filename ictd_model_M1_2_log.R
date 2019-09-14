@@ -815,6 +815,10 @@ ICTD_round1 <- function(data_bulk)
   Prop <- b4
   rownames(Prop) <- c('B.cells','CD4.T.cells','CD8.T.cells','NK.cells','neutrophils','monocytic.lineage','fibroblasts','endothelial.cells')
   
+  
+  rm(list=c("list_c1","MR_IM_result_new_c","list_new_c1","list_new_c2","list_new_c3"))
+  
+  
   print("ICTD_round1 DONE!!!")
   return(Prop)
   
@@ -856,7 +860,7 @@ expression_files <- as.character(input_df$hugo.expr.file)
 
 input_combine <- c()
 output_all_ds <- c()
-for(i in 7:length(expression_files))
+for(i in 1:length(expression_files))
 {
   ff_tmp <- paste('input/', expression_files[i],sep='')
   print(ff_tmp)
@@ -886,6 +890,7 @@ for(i in 7:length(expression_files))
   output_tmp <- ictd_2_output_real(ictd_prop, dn_tmp)
   #combine prediction into big dataframe
   output_all_ds <- rbind(output_all_ds, output_tmp)
+  
 }
 
 # Create the directory the output will go into
