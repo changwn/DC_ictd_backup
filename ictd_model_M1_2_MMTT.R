@@ -1020,23 +1020,23 @@ ICTD_round1 <- function(data_bulk)
     tg_markers[[i]]<-intersect(tg_markers[[i]],rownames(immune_cell_uni_table0_GS))
   }
   print(tg_markers)
-  ccc3<-NMF_method1_test_version4_MM(tg_list=tg_markers,data_ng=data0,data_normalized=data_CORS_cancer,max_ES_cut=0.2,max_ES_cut2=0.3,tProp=tProp0,NMF_RR=0.5)
-  if(ncol(ccc3[[1]]$V)==2)
-  {
-   b4_MM<-ccc3[[1]]$V
-   nn<-colnames(b4_MM)
-   for(i in 1:length(nn))
-   {
-      nn[i]<-unlist(strsplit(nn[i],"_"))[1]
-    }
-    colnames(b4_MM)<-nn
-    b4_MM<-t(b4_MM)
-  }
-  else
-  {
+  # ccc3<-NMF_method1_test_version4_MM(tg_list=tg_markers,data_ng=data0,data_normalized=data_CORS_cancer,max_ES_cut=0.2,max_ES_cut2=0.3,tProp=tProp0,NMF_RR=0.5)
+  # if(ncol(ccc3[[1]]$V)==2)
+  # {
+  #  b4_MM<-ccc3[[1]]$V
+  #  nn<-colnames(b4_MM)
+  #  for(i in 1:length(nn))
+  #  {
+  #     nn[i]<-unlist(strsplit(nn[i],"_"))[1]
+  #   }
+  #   colnames(b4_MM)<-nn
+  #   b4_MM<-t(b4_MM)
+  # }
+  # else
+  # {
   b4_MM<-Compute_Rbase_SVD(data0,tg_markers)
   colnames(b4_MM)<-colnames(data0)
-  }
+  # }
   b4[rownames(b4_MM),]<-b4_MM
   
   #################################################
@@ -1235,12 +1235,12 @@ ICTD_round1 <- function(data_bulk)
   NMF_self_cT[[4]]<-SSS
   names(NMF_self_cT)<-c("NMF_data" ,    "NMF_indi_all" ,"NMF_P_pre",    "S_indi" )
   
-  # 
-  # for(i in 1:nrow(NMF_self_cT[[1]]))
-  # {
-  #   print(rownames(NMF_self_cT[[1]])[i])
-  #   print(quantile(NMF_self_cT[[1]][i,],c(1:10/10)))
-  # }
+
+  for(i in 1:nrow(NMF_self_cT[[1]]))
+  {
+    print(rownames(NMF_self_cT[[1]])[i])
+    print(quantile(NMF_self_cT[[1]][i,],c(1:10/10)))
+  }
   qnmf_result_c_TT <- run_NMF(NMF_self_cT,RR0=1,maxIter=20000, tProp=tProp0)
   
   
@@ -1291,7 +1291,7 @@ expression_files <- as.character(input_df$hugo.expr.file)
 
 input_combine <- c()
 output_all_ds <- c()
-for(i in 1:length(expression_files))
+for(i in 7:length(expression_files))
 {
   ff_tmp <- paste('input/', expression_files[i],sep='')
   print(ff_tmp)
