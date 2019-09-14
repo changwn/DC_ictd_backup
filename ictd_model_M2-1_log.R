@@ -26,27 +26,29 @@ cv.svd.gabriel <- bcv:::cv.svd.gabriel
 
 
 #----------------function part---------------
-ictd_2_output <- function(ictd_prop, dataset.name)
-{
-  #2
-  col_name <- matrix(colnames(ictd_prop),1,length(colnames(ictd_prop)))
-  vv <- c()
-  for(i in 1:length(col_name))
-  {
-    vv <- c(vv, rep(col_name[i], 8))
-  }
-  sample_col <- vv
-  
-  #3  
-  celltype_col <- rep(c('CD4.T.cells','CD8.T.cells','NK.cells','B.cells','monocytic.lineage','neutrophils','endothelial.cells','fibroblasts'), ncol(ictd_prop))
-  #4
-  prediction_col <- rep(runif(8,min=0.01,max=0.8), ncol(ictd_prop))  
-  
-  #bind
-  output_df <- data.frame(dataset.name=dataset.name,sample.id=sample_col,cell.type=celltype_col,prediction=prediction_col)
-  
-  return(output_df)
-}
+# ictd_2_output <- function(ictd_prop, dataset.name)
+# {
+#   #2
+#   col_name <- matrix(colnames(ictd_prop),1,length(colnames(ictd_prop)))
+#   vv <- c()
+#   for(i in 1:length(col_name))
+#   {
+#     vv <- c(vv, rep(col_name[i], 8))
+#   }
+#   sample_col <- vv
+#   
+#   #3  
+#   celltype_col <- rep(c('CD4.T.cells','CD8.T.cells','NK.cells','B.cells','monocytic.lineage','neutrophils','endothelial.cells','fibroblasts'), ncol(ictd_prop))
+#   #4
+#   prediction_col <- rep(runif(8,min=0.01,max=0.8), ncol(ictd_prop))  
+#   
+#   #bind
+#   output_df <- data.frame(dataset.name=dataset.name,sample.id=sample_col,cell.type=celltype_col,prediction=prediction_col)
+#   
+#   return(output_df)
+# }
+
+
 
 ictd_2_output_real <- function(ictd_prop, dataset.name)
 {
@@ -65,6 +67,51 @@ ictd_2_output_real <- function(ictd_prop, dataset.name)
   #prediction_col <- rep(runif(8,min=0.01,max=0.8), ncol(ictd_prop))  
   prediction_col <- c()
   cell_type_order <- c('CD4.T.cells','CD8.T.cells','NK.cells','B.cells','monocytic.lineage','neutrophils','endothelial.cells','fibroblasts')
+  for(i in 1:length(col_name))
+  {
+    prop_tmp <- ictd_prop[cell_type_order,i]
+    prediction_col <- c(prediction_col, prop_tmp)
+  }
+  
+  
+  #bind
+  output_df <- data.frame(dataset.name=dataset.name,sample.id=sample_col,cell.type=celltype_col,prediction=prediction_col)
+  
+  return(output_df)
+}
+
+
+ictd_2_output_real_14 <- function(ictd_prop, dataset.name)
+{
+  #2
+  col_name <- matrix(colnames(ictd_prop),1,length(colnames(ictd_prop)))
+  vv <- c()
+  for(i in 1:length(col_name))
+  {
+    vv <- c(vv, rep(col_name[i], 14))  #14 cell types
+  }
+  sample_col <- vv
+  
+  #3  
+  new_cell_type <- c("memory.B.cells"  ,
+                     "naive.B.cells"   ,
+                     "memory.CD4.T.cells"   ,
+                     "naive.CD4.T.cells"     ,
+                     "regulatory.T.cells"   ,
+                     "memory.CD8.T.cells" ,    
+                     "naive.CD8.T.cells"    ,
+                     "NK.cells"    ,
+                     "neutropils"   ,
+                     "monocytes"     ,
+                     "myeloid.dendritic.cells",
+                     "macrophages"      , 
+                     "fibroblasts"     ,
+                     "endothelial.cells"    )  
+  celltype_col <- rep(new_cell_type, ncol(ictd_prop))
+  #4
+  #prediction_col <- rep(runif(8,min=0.01,max=0.8), ncol(ictd_prop))  
+  prediction_col <- c()
+  cell_type_order <- new_cell_type
   for(i in 1:length(col_name))
   {
     prop_tmp <- ictd_prop[cell_type_order,i]
@@ -884,7 +931,7 @@ for(i in 1:length(expression_files))
   # output_all_ds <- rbind(output_all_ds, output_tmp)
   #b) real output!!!
   dn_tmp <- unlist(strsplit(expression_files[i],split='.',fixed=T))[[1]]
-  output_tmp <- ictd_2_output_real(ictd_prop, dn_tmp)
+  output_tmp <- ictd_2_output_real_14(ictd_prop, dn_tmp)
   #combine prediction into big dataframe
   output_all_ds <- rbind(output_all_ds, output_tmp)
 }
