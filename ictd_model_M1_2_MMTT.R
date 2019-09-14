@@ -723,21 +723,23 @@ ICTD_round1 <- function(data_bulk)
   }
   data.matrix <- rm_zero_row(data.matrix)
   d.matrix <- as.matrix(data.matrix)
-  
+  st_data_nonneg<-0
   if ((max(data.matrix)>30)&(min(data.matrix)>=0)) {
     d.matrix <- log(data.matrix + 1)
     d.matrix <- as.matrix(d.matrix)
     print("calu log because data > 20!")
   }
-  if (min(data.matrix) < 0 ) {
+  if ((max(data.matrix)<30)&(min(data.matrix)<0) ) {
    d.matrix <- exp(data.matrix)
    d.matrix<-as.matrix(d.matrix)
     print("For negative : take exp!")
   }
-  
+  if(min(d.matrix)>=0)
+  {
+    st_data_nonneg<-1
+  }
   print(d.matrix[1:5,1:5])
-  
-  
+  print(st_data_nonneg)
   
   data0 <- d.matrix
   data2 <- data0
@@ -754,8 +756,7 @@ ICTD_round1 <- function(data_bulk)
   tg_key_c = "nonono"
   
   #update data0
-  data0 <- data.matrix
-  
+  data0 <- d.matrix
   
   
   list_new_c1<-Process_MR_IM_result_new(MR_IM_result_new_c,tg_key_c=tg_key0,cell_type_enrich_cut=0.4,cor_cut0=0.8,num_cut=6,num_cut2=5,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)
@@ -1020,23 +1021,31 @@ ICTD_round1 <- function(data_bulk)
     tg_markers[[i]]<-intersect(tg_markers[[i]],rownames(immune_cell_uni_table0_GS))
   }
   print(tg_markers)
-  # ccc3<-NMF_method1_test_version4_MM(tg_list=tg_markers,data_ng=data0,data_normalized=data_CORS_cancer,max_ES_cut=0.2,max_ES_cut2=0.3,tProp=tProp0,NMF_RR=0.5)
-  # if(ncol(ccc3[[1]]$V)==2)
-  # {
-  #  b4_MM<-ccc3[[1]]$V
-  #  nn<-colnames(b4_MM)
-  #  for(i in 1:length(nn))
-  #  {
-  #     nn[i]<-unlist(strsplit(nn[i],"_"))[1]
-  #   }
-  #   colnames(b4_MM)<-nn
-  #   b4_MM<-t(b4_MM)
-  # }
-  # else
-  # {
-  b4_MM<-Compute_Rbase_SVD(data0,tg_markers)
-  colnames(b4_MM)<-colnames(data0)
-  # }
+  if(st_data_nonneg==1)
+  {
+    ccc3<-NMF_method1_test_version4_MM(tg_list=tg_markers,data_ng=data0,data_normalized=data_CORS_cancer,max_ES_cut=0.2,max_ES_cut2=0.3,tProp=tProp0,NMF_RR=0.5)
+   if(ncol(ccc3[[1]]$V)==2)
+   {
+    b4_MM<-ccc3[[1]]$V
+    nn<-colnames(b4_MM)
+    for(i in 1:length(nn))
+    {
+      nn[i]<-unlist(strsplit(nn[i],"_"))[1]
+    }
+    colnames(b4_MM)<-nn
+    b4_MM<-t(b4_MM)
+   }
+   else
+   {
+     b4_MM<-Compute_Rbase_SVD(data0,tg_markers)
+    colnames(b4_MM)<-colnames(data0)
+   }
+  }
+  else
+  {
+    b4_MM<-Compute_Rbase_SVD(data0,tg_markers)
+    colnames(b4_MM)<-colnames(data0)
+  }
   b4[rownames(b4_MM),]<-b4_MM
   
   #################################################
@@ -1241,10 +1250,22 @@ ICTD_round1 <- function(data_bulk)
     print(rownames(NMF_self_cT[[1]])[i])
     print(quantile(NMF_self_cT[[1]][i,],c(1:10/10)))
   }
-  qnmf_result_c_TT <- run_NMF(NMF_self_cT,RR0=1,maxIter=20000, tProp=tProp0)
-  
-  
-  b4_TT<-t(qnmf_result_c_TT$V)
+  if(st_data_nonneg==1)
+  {
+    qnmf_result_c_TT <- run_NMF(NMF_self_cT,RR0=1,maxIter=20000, tProp=tProp0)
+    b4_TT<-t(qnmf_result_c_TT$V)
+  }
+  else
+  {
+    label_matrix0<-label_matrix[which(apply(label_matrix,1,sum)==1),]
+    tg_TT_list<-list()
+    tg_TT_list[[1]]<-names(which(label_matrix0[,1]==1))
+    tg_TT_list[[2]]<-names(which(label_matrix0[,2]==1))
+    tg_TT_list[[3]]<-names(which(label_matrix0[,3]==1))
+    names(tg_TT_list)<-c("CD4.T.cells","CD8.T.cells","NK.cells")
+    b4_TT<-Compute_Rbase_SVD(data0,tg_TT_list)
+    colnames(b4_TT)<-colnames(data0)
+  }
   b4[rownames(b4_TT),]<-b4_TT
   
   Prop <- b4
@@ -1291,7 +1312,7 @@ expression_files <- as.character(input_df$hugo.expr.file)
 
 input_combine <- c()
 output_all_ds <- c()
-for(i in 7:length(expression_files))
+for(i in 6:length(expression_files))
 {
   ff_tmp <- paste('input/', expression_files[i],sep='')
   print(ff_tmp)
