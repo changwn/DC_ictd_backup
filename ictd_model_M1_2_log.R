@@ -809,8 +809,8 @@ ICTD_round1 <- function(data_bulk)
   colnames(b4)<-colnames(data01)
   
   l4<-tg_markers_new
-  b4_1<-Compute_Rbase_SVD(data.matrix,l4)
-  colnames(b4_1)<-colnames(data.matrix)
+  b4_1<-Compute_Rbase_SVD(d.matrix,l4)
+  colnames(b4_1)<-colnames(d.matrix)
   b4[rownames(b4_1),]<-b4_1
   Prop <- b4
   rownames(Prop) <- c('B.cells','CD4.T.cells','CD8.T.cells','NK.cells','neutrophils','monocytic.lineage','fibroblasts','endothelial.cells')
