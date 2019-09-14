@@ -739,6 +739,7 @@ ICTD_round1 <- function(data_bulk)
     st_data_nonneg<-1
   }
   print(d.matrix[1:5,1:5])
+  print("st_data_nonneg:")
   print(st_data_nonneg)
   
   data0 <- d.matrix
@@ -1209,12 +1210,12 @@ ICTD_round1 <- function(data_bulk)
   }
   names(tg_list_TT)<-nn
   
-  print(tg_list_TT)
+  # print(tg_list_TT)
   for(i in 1:length(tg_list_TT))
   {
     tg_list_TT[[i]]<-intersect(tg_list_TT[[i]],rownames(immune_cell_uni_table0_GS))
   }
-  print(tg_list_TT)
+  # print(tg_list_TT)
 
   tg_genes_all<-c()
   for(i in 1:length(tg_list_TT))
@@ -1245,11 +1246,11 @@ ICTD_round1 <- function(data_bulk)
   names(NMF_self_cT)<-c("NMF_data" ,    "NMF_indi_all" ,"NMF_P_pre",    "S_indi" )
   
 
-  for(i in 1:nrow(NMF_self_cT[[1]]))
-  {
-    print(rownames(NMF_self_cT[[1]])[i])
-    print(quantile(NMF_self_cT[[1]][i,],c(1:10/10)))
-  }
+  # for(i in 1:nrow(NMF_self_cT[[1]]))
+  # {
+  #   print(rownames(NMF_self_cT[[1]])[i])
+  #   print(quantile(NMF_self_cT[[1]][i,],c(1:10/10)))
+  # }
   if(st_data_nonneg==1)
   {
     qnmf_result_c_TT <- run_NMF(NMF_self_cT,RR0=1,maxIter=20000, tProp=tProp0)
@@ -1312,7 +1313,7 @@ expression_files <- as.character(input_df$hugo.expr.file)
 
 input_combine <- c()
 output_all_ds <- c()
-for(i in 6:length(expression_files))
+for(i in 7:length(expression_files))
 {
   ff_tmp <- paste('input/', expression_files[i],sep='')
   print(ff_tmp)
