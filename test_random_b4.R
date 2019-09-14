@@ -98,10 +98,12 @@ for(i in 1:length(expression_files))
   data_tmp <- read.csv(ff_tmp)
   rownames(data_tmp) <- data_tmp[,1]
   data_tmp <- data_tmp[,-1]
+  print(paste(i, " dataSet dim: -- "))
+  print(data_tmp)
   #ictd_result <- ICTD(data_tmp)
   #ictd_prop <- data_tmp[1:12,]
   ictd_prop <- matrix(runif(8*ncol(data_tmp), 0.1,0.4), 8, ncol(data_tmp))
-  colnames(ictd_prop) <- paste("Setsample", 1:ncol(ictd_prop),sep = "")
+  colnames(ictd_prop) <- colnames(data_tmp)
   rownames(ictd_prop) <- c('CD4.T.cells','CD8.T.cells','NK.cells','B.cells','monocytic.lineage','neutrophils','endothelial.cells','fibroblasts')
   
   dn_tmp <- unlist(strsplit(expression_files[i],split='.',fixed=T))[[1]]
