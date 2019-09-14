@@ -609,11 +609,11 @@ ICTD_round1 <- function(data_bulk)
     d.matrix <- as.matrix(d.matrix)
     print("calu log because data > 20!")
   }
-  if (min(data.matrix) < 0 ) {
-    d.matrix <- exp(data.matrix)
-    d.matrix<-as.matrix(d.matrix)
-    print("For negative : take exp!")
-  }
+  # if ((max(data.matrix)<30)&(min(data.matrix)<0)) {
+  #   d.matrix <- exp(data.matrix)
+  #   d.matrix<-as.matrix(d.matrix)
+  #   print("For negative : take exp!")
+  # }
   
   print(d.matrix[1:5,1:5])
   
@@ -856,7 +856,7 @@ expression_files <- as.character(input_df$hugo.expr.file)
 
 input_combine <- c()
 output_all_ds <- c()
-for(i in 1:length(expression_files))
+for(i in 7:length(expression_files))
 {
   ff_tmp <- paste('input/', expression_files[i],sep='')
   print(ff_tmp)
