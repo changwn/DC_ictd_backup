@@ -1119,10 +1119,10 @@ ICTD_round1 <- function(data_bulk)
   names(TT_core2)<-c("Tcells","GZs","CD4.T.cells","CD8.T.cells","NK.cells")
   
   N<-0
+  tg_list_TT<-list()
   if(length(selected_Bases)>0)
   {
     kkk<-compute_jaccard2(selected_Bases,TT_core2)
-    tg_list_TT<-list()
     tgs1<-which(kkk[,1]>apply(kkk[,-1],1,max))
     tgs2<-which(kkk[,2]>apply(kkk[,-2],1,max))
     tgs3<-which(kkk[,3]>apply(kkk[,-3],1,max))
