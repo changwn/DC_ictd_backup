@@ -775,6 +775,8 @@ ICTD_round1 <- function(data_bulk)
   
   aaa3<-compute_jaccard2(R1_filter_step1_results_new3[[4]],LM22_test_list1_plus)
   
+  print("start to run MMTT strategy!")
+  
   #M1----------------------------------------------------------------------------------------
   tg_ids<-c(1:8)
   tg_markers<-list()
@@ -1049,6 +1051,8 @@ ICTD_round1 <- function(data_bulk)
   }
   b4[rownames(b4_MM),]<-b4_MM
   
+  
+  print("part 1 done!!!")
   #################################################
   LM22_test_list1_plus_unique<-generate_unique_list(LM22_test_list1_plus)
   TT_core_list<-list(LM22_test_list1_plus_unique[[2]],LM22_test_list1_plus_unique_core[[3]],unique(c(LM22_test_list1_plus_unique_core[[4]],LM22_test_list1_plus_unique[[4]])))
@@ -1313,7 +1317,7 @@ expression_files <- as.character(input_df$hugo.expr.file)
 
 input_combine <- c()
 output_all_ds <- c()
-for(i in 1:length(expression_files))
+for(i in 7:length(expression_files))
 #for(i in 1:6)  
 {
   ff_tmp <- paste('input/', expression_files[i],sep='')
