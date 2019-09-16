@@ -863,6 +863,9 @@ ICTD_round1 <- function(data_bulk)
                        "fibroblasts"     ,
                        "endothelial.cells"    )  
   
+  rm(list=c("list_c1","MR_IM_result_new_c","list_new_c1","list_new_c2","list_new_c3"))
+  
+  
   print("ICTD_round1 DONE!!!")
   return(Prop)
   
@@ -901,6 +904,7 @@ dataset_name <- as.character(input_df$dataset.name)
 
 # Extract the names of the expression files that use gene name
 expression_files <- as.character(input_df$hugo.expr.file)
+
 
 input_combine <- c()
 output_all_ds <- c()
