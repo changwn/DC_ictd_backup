@@ -771,7 +771,7 @@ ICTD_round1 <- function(data_bulk)
   }
   print("!")
   names(tg_markers)<-names(LM22_test_list1_plus_unique_core)[tg_ids]
-  #print(tg_markers)
+  print(tg_markers)
   tg_markers_new<-list()
   N<-0
   nn<-c()
@@ -801,8 +801,15 @@ ICTD_round1 <- function(data_bulk)
     }
   }
   names(tg_markers_new)<-nn
+
+  for(i in 1:length(tg_markers_new))
+  {
+    print(names(tg_markers_new)[i])
+    print(tg_markers_new[[i]])
+    print(cor(t(data01[tg_markers_new[[i]],])))
+  }
   print("!!")
-  print(tg_markers)
+ 
   
   b4<-matrix(0,length(tg_markers),ncol(data01))
   rownames(b4)<-names(tg_markers)
