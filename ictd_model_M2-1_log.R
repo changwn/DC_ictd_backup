@@ -935,7 +935,8 @@ for(i in 1:length(expression_files))
   # output_all_ds <- rbind(output_all_ds, output_tmp)
   #b) real output!!!
   dn_tmp <- unlist(strsplit(expression_files[i],split='.',fixed=T))[[1]]
-  output_tmp <- ictd_2_output_real_14(ictd_prop, dn_tmp)
+  dn_tmp_short <- unlist(strsplit(dn_tmp, split='-', fixed=T))[[1]]
+  output_tmp <- ictd_2_output_real_14(ictd_prop, dn_tmp_short)
   #combine prediction into big dataframe
   output_all_ds <- rbind(output_all_ds, output_tmp)
 }
