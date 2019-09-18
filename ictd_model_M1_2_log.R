@@ -918,9 +918,9 @@ for(i in 1:length(expression_files))
 # Create the directory the output will go into
 dir.create("output")
 
-stop here
-cor(1,'')
-print("must stop list command")
+
+#cor(1,'')
+#print("must stop list command")
 
 
 # Write the result into output directory
