@@ -1,8 +1,7 @@
 
 
 print("test docker with M1_2!")
-print("test docker with M1_2!")
-print("test docker with M1_2!")
+
 
 
 # Then, test the ICTD
@@ -809,8 +808,8 @@ ICTD_round1 <- function(data_bulk)
     print(cor(t(data01[tg_markers_new[[i]],])))
   }
   print("!!")
- 
   
+
   b4<-matrix(0,length(tg_markers),ncol(data01))
   rownames(b4)<-names(tg_markers)
   colnames(b4)<-colnames(data01)
@@ -821,7 +820,19 @@ ICTD_round1 <- function(data_bulk)
   b4[rownames(b4_1),]<-b4_1
   Prop <- b4
   rownames(Prop) <- c('B.cells','CD4.T.cells','CD8.T.cells','NK.cells','neutrophils','monocytic.lineage','fibroblasts','endothelial.cells')
+
   
+  #print marker and correlation with predicted porportion
+  print("Below : Marker and cor(Marker, proportion)")
+  for(i in 1:length(tg_markers_new))
+  {
+    print(paste("i ==", i, sep=''))
+    print(names(tg_markers_new)[i])
+    print(rownames(Prop)[i])
+    print(tg_markers_new[[i]])
+    print(cor(t(d.matrix[tg_markers_new[i], ]), t(Prop[i, ])))
+    
+  }    
   
   rm(list=c("list_c1","MR_IM_result_new_c","list_new_c1","list_new_c2","list_new_c3"))
   
@@ -904,6 +915,11 @@ for(i in 1:length(expression_files))
 
 # Create the directory the output will go into
 dir.create("output")
+
+stop here
+cor(1,'')
+print("must stop list command")
+
 
 # Write the result into output directory
 readr::write_csv(output_all_ds, "output/predictions.csv")
