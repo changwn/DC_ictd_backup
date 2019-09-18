@@ -830,7 +830,7 @@ ICTD_round1 <- function(data_bulk)
     print(names(tg_markers_new)[i])
     print(rownames(Prop)[i])
     print(tg_markers_new[[i]])
-    print(cor(t(d.matrix[tg_markers_new[i], ]), t(Prop[i, ])))
+    print(cor(t(d.matrix[tg_markers_new[[i]], ]), t(Prop[i, ])))
     
   }    
   
