@@ -101,7 +101,7 @@ ictd_2_output_real_14 <- function(ictd_prop, dataset.name)
                      "memory.CD8.T.cells" ,    
                      "naive.CD8.T.cells"    ,
                      "NK.cells"    ,
-                     "neutropils"   ,
+                     "neutrophils"   ,
                      "monocytes"     ,
                      "myeloid.dendritic.cells",
                      "macrophages"      , 
