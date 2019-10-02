@@ -862,7 +862,7 @@ ICTD_round1 <- function(data_bulk)
                        "memory.CD8.T.cells" ,    
                        "naive.CD8.T.cells"    ,
                        "NK.cells"    ,
-                       "neutropils"   ,
+                       "neutrophils"   ,
                        "monocytes"     ,
                        "myeloid.dendritic.cells",
                        "macrophages"      , 
