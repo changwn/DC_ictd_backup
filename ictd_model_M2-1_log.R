@@ -856,7 +856,7 @@ ICTD_round1 <- function(data_bulk)
                        "memory.CD8.T.cells" ,    
                        "naive.CD8.T.cells"    ,
                        "NK.cells"    ,
-                       "neutropils"   ,
+                       "neutrophils"   ,
                        "monocytes"     ,
                        "myeloid.dendritic.cells",
                        "macrophages"      , 
@@ -952,6 +952,5 @@ print("output file dim:")
 print(dim(output_all_ds))
 print("output :::")
 print(output_all_ds)
-
 
 
