@@ -581,6 +581,30 @@ top5_SVD_cor<-function(data_c,tg_genes)
 }
 
 
+Compute_Rbase_SVD_std_base <- function (bulk_data, tg_R1_lists_selected) 
+{
+  tg_R1_lists_st_ccc <- tg_R1_lists_selected
+  data_c <- bulk_data
+  Base_all <- c()
+  for (i in 1:length(tg_R1_lists_st_ccc)) {
+    tg_data_c <- data_c[tg_R1_lists_st_ccc[[i]], ]
+    svd_result <- svd(tg_data_c)
+    cc <- svd_result$v[, 1]
+    cc <- cc*svd_result$d[1]  #u^T u = 1, u is orthonomal.
+    #cc <- cc*mean(svd_result$u)
+    #cc <- cc/mean(cc)
+    ccc <- cor(cc, t(tg_data_c))
+    if (mean(ccc) < 0) {
+      cc <- -cc
+    }
+    Base_all <- rbind(Base_all, cc)
+  }
+  rownames(Base_all) <- 1:nrow(Base_all)
+  if (length(names(tg_R1_lists_selected)) > 1) {
+    rownames(Base_all) <- names(tg_R1_lists_selected)
+  }
+  return(Base_all)
+}
 
 
 
@@ -815,7 +839,8 @@ ICTD_round1 <- function(data_bulk)
   colnames(b4)<-colnames(data01)
   
   l4<-tg_markers_new
-  b4_1<-Compute_Rbase_SVD(d.matrix,l4)
+  #b4_1<-Compute_Rbase_SVD(d.matrix,l4)
+  b4_1<-Compute_Rbase_SVD_std_base(d.matrix,l4)
   colnames(b4_1)<-colnames(d.matrix)
   b4[rownames(b4_1),]<-b4_1
   Prop <- b4
