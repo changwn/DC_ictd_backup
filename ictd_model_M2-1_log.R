@@ -629,6 +629,31 @@ top5_SVD_cor<-function(data_c,tg_genes)
 }
 
 
+Compute_Rbase_SVD_std_base <- function (bulk_data, tg_R1_lists_selected) 
+{
+  tg_R1_lists_st_ccc <- tg_R1_lists_selected
+  data_c <- bulk_data
+  Base_all <- c()
+  for (i in 1:length(tg_R1_lists_st_ccc)) {
+    tg_data_c <- data_c[tg_R1_lists_st_ccc[[i]], ]
+    svd_result <- svd(tg_data_c)
+    cc <- svd_result$v[, 1]
+    cc <- cc*svd_result$d[1]  #u^T u = 1, u is orthonomal.
+    #cc <- cc*mean(svd_result$u)
+    #cc <- cc/mean(cc)
+    ccc <- cor(cc, t(tg_data_c))
+    if (mean(ccc) < 0) {
+      cc <- -cc
+    }
+    Base_all <- rbind(Base_all, cc)
+  }
+  rownames(Base_all) <- 1:nrow(Base_all)
+  if (length(names(tg_R1_lists_selected)) > 1) {
+    rownames(Base_all) <- names(tg_R1_lists_selected)
+  }
+  return(Base_all)
+}
+
 
 
 
@@ -690,6 +715,7 @@ ICTD_round1 <- function(data_bulk)
   R1_filter_step1_results_new3<-R1_list_filtering_step1_new_BCV2(list_new_c3,data_CORS_cancer=data_ccc,max_cut=6,cutn0=6,cut10=0.6,IM_id_list,immune_cell_uni_table=immune_cell_uni_table0_GS)#cut10=0.8 for RNA-seq, cut10=0.75 for microarray, cut10=0.85 for scRNA-seq simulated data
   
   LM22_test_list1_plus_unique<-generate_unique_list(LM22_test_list1_plus)
+  
   T_ALL<-c("CD2","CD3E","CD3G","CD3D","IL2RB","LCK","TIGIT","CD6","CD7","IL2RB","CCR5","CXCR3")
   T_CD4<-LM22_test_list1_plus_unique[[2]]
   T_CD8<-setdiff(unique(sort(c(LM22_test_list1_plus_unique[[3]],LM22_test_list1_plus_unique_core[[3]]))),c("CD2","CD3E","CD3G","GZMB" ,"GZMK","KLRG1"))
@@ -697,17 +723,21 @@ ICTD_round1 <- function(data_bulk)
   NK_gg<-setdiff(unique(c(LM22_test_list1_plus_unique[[4]],LM22_test_list1_plus_unique_core[[4]])),c("CCND2","CDK6","ZNF135",T_GZM,T_CD8,T_ALL))
   
   LM22_test_list2_plus<-LM22_test_list2
+  LM22_test_list2_plus[["myeloid.dendritic.cells"]]<-TCGA_core_list[[20]]
   LM22_test_list2_plus[["fibroblasts"]]<-LM22_test_list1_plus[["fibroblasts"]]
   LM22_test_list2_plus[["endothelial.cells"]]<-LM22_test_list1_plus[["endothelial.cells"]]
   
   LM22_test_list2_plus_unique<-generate_unique_list(LM22_test_list2_plus)
+  LM22_test_list2_plus_unique[[1]]<-unique(c(LM22_test_list2_plus_unique[[1]],TCGA_core_list[[18]],TCGA_core_list[[21]]))
+  LM22_test_list2_plus_unique[[2]]<-unique(c(LM22_test_list2_plus_unique[[2]],TCGA_core_list[[7]]))
+  
   LM22_test_list2_plus_unique[[5]]<-c("CLTA4","FOXP3","NTN3","TRAC","TRAV21"  ,"BATF","NLM1",  "TRAV8-6" ,  "TRAV9-2")
   LM22_test_list2_plus_unique[[6]]<-c(T_GZM,"LCK")
-  LM22_test_list2_plus_unique[[7]]<-setdiff(LM22_test_list2_plus[[7]],c(T_GZM,"KLRC4" ,   "KLRG1" ,   "KLRK1"))
-  LM22_test_list2_plus_unique[[8]]<-unique(c(LM22_test_list2_plus_unique[[8]],c("KLRC4" ,   "KLRG1" ,   "KLRK1")))
-  
-  
-  
+  LM22_test_list2_plus_unique[[7]]<-T_CD8
+  LM22_test_list2_plus_unique[[8]]<-NK_gg
+  LM22_test_list2_plus_unique[[9]]<-LM22_test_list1_plus_unique_core[[5]]
+  LM22_test_list2_plus_unique[[12]]<-LM22_test_list1_plus_unique_core[[6]]
+  LM22_test_list2_plus_unique[[10]]<-unique(c(LM22_test_list2_plus_unique[[10]],"FCGR3A","CD14","FCGR1A","FCGR1B"))
   
   aaa1<-compute_jaccard2(R1_filter_step1_results_new1[[4]],LM22_test_list2_plus_unique)
   aaa2<-compute_jaccard2(R1_filter_step1_results_new2[[4]],LM22_test_list2_plus_unique)
@@ -797,10 +827,10 @@ ICTD_round1 <- function(data_bulk)
   names(tg_markers)<-names(LM22_test_list2_plus_unique)[tg_ids]
   #for(i in 1:length(tg_markers))
   #{
-  #	if(length(tg_markers[[i]])==1)
-  #	{
-  #		tg_markers[[i]]<-top5_SVD_cor(data01,LM22_test_list2_plus_unique[[tg_ids[i]]]) ##################################################
-  #	}
+  # if(length(tg_markers[[i]])==1)
+  # {
+  #   tg_markers[[i]]<-top5_SVD_cor(data01,LM22_test_list2_plus_unique[[tg_ids[i]]]) ##################################################
+  # }
   #}
   #l4<-tg_markers
   #b4<-Compute_Rbase_SVD(d.matrix,l4)
@@ -844,9 +874,12 @@ ICTD_round1 <- function(data_bulk)
   colnames(b4)<-colnames(data0)
   
   l4<-tg_markers_new
-  b4_1<-Compute_Rbase_SVD(data0,l4)
+  b4_1<-Compute_Rbase_SVD_std_base(data0,l4)
   colnames(b4_1)<-colnames(data0)
   b4[rownames(b4_1),]<-b4_1
+  if(c("FOXP3") %in% rownames(data0)){
+    b4["regulatory.T.cells",]<-data0["FOXP3",]
+  }
   Prop <- b4
   rownames(Prop) <-  c("memory.B.cells"  ,
                        "naive.B.cells"   ,
@@ -863,7 +896,9 @@ ICTD_round1 <- function(data_bulk)
                        "fibroblasts"     ,
                        "endothelial.cells"    )  
   
+  
   rm(list=c("list_c1","MR_IM_result_new_c","list_new_c1","list_new_c2","list_new_c3"))
+  
   
   
   print("ICTD_round1 DONE!!!")
